@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_440354_cvrf_inte.CVRFSolutionProcessor</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>CVRFSolutionProcessor</name>
+        <script><![CDATA[var CVRFSolutionProcessor = Class.create();
+CVRFSolutionProcessor.prototype = {
+    initialize: function(domain, source, processId) {
+        this.processId = processId;
+        this.inserted = 0;
+        this.updated = 0;
+        this.insertedLib = {};
+        this.updatedLib = {};
+        this.productLib = {};
+        this.productCategoryLib = {};
+        this.domain = domain;
+        this.SOURCE = source;
+    },
+
+    process: function(attachmentGr) {
+        try{
+        gs.info('process function called');
+        if (!gs.nil(attachmentGr)) {
+            var attachment = new GlideSysAttachment();
+            var stream = attachment.getContentStream(attachmentGr.sys_id);
+            //Construct XMLDocument2 with input stream as argument.
+            var xmlDoc = new XMLDocument2(stream);
+            var start = new GlideDateTime();
+            var node = xmlDoc.getFirstNode("/cvrfdoc");
+            if (null != node) this._handleCvrfdoc(node);
+            this._completeProcess();
+        } else {
+            gs.warn("CVRF transform: found empty attachment gliderecord");
+        }
+        }catch(e){
+            gs.error("Exception in process: " + e);
+        }
+    },
+
+    _handleCvrfdoc: function(node) {
+        var cvrfData = {};
+        cvrfData["cves"] = [];
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            var nodeName = cn.getNodeName();
+            var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
+            if (nodeName == "DocumentTitle") {
+                cvrfData["DocumentTitle"] = textContent;
+                continue;
+            }
+            if (nodeName == "DocumentTracking") {
+                this._handleDocumentTracking(cvrfData, cn);
+                continue;
+            }
+            if (nodeName == "Vulnerability") {
+                this._handleVulnerability(cvrfData, cn);
+                continue;
+            }
+            if (nodeName == "DocumentNotes") {
+                this._handleDocumentNotes(cvrfData, cn);
+                continue;
+            }
+            if (nodeName == "ProductTree") {
+                this._handleProductTree(cvrfData, cn);
+                continue;
+            }
+            if (nodeName == "DocumentReferences") {
+                this._handleDocumentReferences(cvrfData, cn);
+                continue;
+            }
+
+            if (
+                (nodeName == "#text" &&
+                    textContent.trim().length == 0) ||
+                nodeName == "DocumentType" ||
+                nodeName == "DocumentPublisher" ||
+                nodeName == "DocumentDistribution" 
+            )
+                continue;
+            cvrfData[nodeName] = textContent + "";
+        }
+        gs.info("CVRFdata : " + JSON.stringify(cvrfData));
+        this._populateTables(cvrfData);
+    },
+
+    _handleDocumentReferences: function(cvrfData, node) {
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            if (cn.getNodeName() == "Reference" && !gs.nil(cn.getTextContent())) {
+                var child = cn.getChildNodeIterator();
+                while (child.hasNext()) {
+                    var nextNode = child.next();
+                    if (nextNode.getNodeName() == "URL" && !gs.nil(cn.getTextContent())) {
+                        var url = nextNode.getTextContent();
+                        if (cvrfData["url"])
+                            cvrfData["url"] = this._handleUrls(url, cvrfData["url"]);
+                        else
+                            cvrfData["url"] = this._handleUrls(url);
+                        break;
+                    }
+                }
+            }
+        }
+    },
+
+    _handleDocumentNotes: function(cvrfData, node) {
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            if (cn.getNodeName() == "Note" && cn.getAttribute("Type") == "Summary" && !gs.nil(cn.getTextContent())) {
+                cvrfData["description"] = "<h4>" + "Topic" + "</h4>" + cn.getTextContent().trim();
+            } else if (cn.getNodeName() == "Note" && cn.getAttribute("Type") == "General" && !gs.nil(cn.getTextContent())) {
+                if (cvrfData["description"])
+                    cvrfData["description"] += "<br/><br/>" + "<h4>" + "Details" + "</h4>" + cn.getTextContent().trim();
+                else
+                    cvrfData["description"] = "<h4>" + "Details" + "</h4>" + cn.getTextContent().trim();
+                break;
+            }
+        }
+    },
+
+    _handleDocumentTracking: function(cvrfData, node) {
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            var nodeName = cn.getNodeName();
+            var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
+            if (nodeName == "Identification") {
+                this._handleIdentification(cvrfData, cn);
+                continue;
+            }
+            if (nodeName == "InitialReleaseDate") {
+                cvrfData["date_published"] = this._convertToSNFriendlyTime(textContent);
+                continue;
+            }
+            if (nodeName == "CurrentReleaseDate") {
+                cvrfData["last_modified"] = this._convertToSNFriendlyTime(textContent);
+                continue;
+            }
+        }
+    },
+
+    _handleIdentification: function(rhsa, node) {
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            if (cn.getNodeName() == "ID") {
+                if (!gs.nil(cn.getTextContent())) {
+                    rhsa["id"] = cn.getTextContent();
+                    break;
+                }
+            }
+        }
+    },
+    
+    _convertToSNFriendlyTime: function(timeStr) {
+        if (gs.nil(timeStr))
+            return;
+        timeStr = timeStr.replace(/T/g, " ").replace(/Z/g, "");
+        return new GlideDateTime(timeStr);
+    },
+
+    _handleVulnerability: function(cvrfData, node){
+        gs.info('vulnerability called : ');
+        if (gs.nil(node))
+            return;
+
+        var cni = node.getChildNodeIterator();
+        var cve = "";
+        var notes = "";
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            var nodeName = cn.getNodeName();
+            var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
+            if (nodeName == "Remediations" && !cvrfData["type"]) {
+                this._handleRemediation(cvrfData, cn, cve);
+                continue;
+            }
+            if (nodeName == "CVE") {
+                cve = textContent;
+                cvrfData["cves"].push(cve);
+                continue;
+            }
+            if (nodeName == "Notes") {
+                notes = this._getCveNotes(cn);
+                continue;
+            }
+        }
+        var additionalData = "<h3>" + cve + "</h3>";
+        additionalData += notes;
+        additionalData += "<hr>";
+        if (cvrfData["vulnerability_notes"])
+            cvrfData["vulnerability_notes"] += additionalData;
+        else cvrfData["vulnerability_notes"] = additionalData;
+    },
+
+    _getCveNotes: function(node) {
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            if (cn.getNodeName() == "Note") {
+                return cn.getTextContent();
+            }
+        }
+    },
+
+	_handleProductTree: function (cvrfData, node) {
+        try{
+        gs.info("handle producttree function called");
+        var productMap = {};
+        var cni = node.getChildNodeIterator();
+        gs.info("Type of node : " + typeof(node));
+        gs.info('checkpoint 1');
+        while (cni.hasNext()) {// first Branch node typr vendor
+            gs.info('checkpoint 1.3');
+            var cn1 = cni.next();
+            if(cn1.getNodeName() == "Branch" && cn1.getAttribute("Type") == "Vendor"){
+                gs.info("checkpoint 1.5 : " + cn1.getNodeName() + cn1.getAttribute("Type") + JSON.stringify(cn1) + typeof(cn1));
+                var child2 = cn1.getChildNodeIterator();
+                gs.info("checkpoint 2");
+                while (child2.hasNext()) {//iterate Product Family
+                    var cn = child2.next();
+                    var familyName = cn.getAttribute("Name");
+                    gs.info("checkpoint3");
+                    if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Family") {
+                        var child1 = cn.getChildNodeIterator();
+                        while (child1.hasNext()) {// iterate product name
+                            var nextNode = child1.next();
+                            if (nextNode.getNodeName() == "Branch" && nextNode.getAttribute("Type") == "Product Name") {
+                                this._fetchSoftwareInfo(nextNode, productMap, familyName);
+                            }
+                        }
+                        //break;
+                    }
+                }
+            }
+        }
+        cvrfData["productMap"] = productMap;
+        }catch(e){
+            gs.error("Exception in producttree : " + e);
+        }
+    },
+
+    _populateTables: function(cvrfData) {
+        var solutionSysId;
+        var newProductSysIds;
+        var gr = new GlideRecord("sn_vul_solution");
+        gr.addQuery("source_id", cvrfData["id"]);
+        gr.addQuery("source", this.SOURCE);
+        if (this.domain) gr.addQuery("sys_domain", this.domain);
+        gr.query();
+        if (gr.next())
+            this.updated++;
+        else {
+            gr.initialize();
+            this.inserted++;
+        }
+        if (this.domain) gr.setValue("sys_domain", this.domain);
+        gr.setValue("source_id", cvrfData["id"]);
+        gr.setValue("source", this.SOURCE);
+        gr.setValue("solution_type", this._getSolutionType(cvrfData["type"]));
+        if (!gs.nil(cvrfData["DocumentTitle"]))
+            gr.setValue("summary", cvrfData["DocumentTitle"]);
+        if (!gs.nil(cvrfData["url"]))
+            gr.setValue("urls", cvrfData["url"]);
+        if (!gs.nil(cvrfData["description"]))
+            gr.setValue("description", cvrfData["description"]);
+        gr.setValue("bulletin", cvrfData["id"]);
+        if (!gs.nil(cvrfData["date_published"]))
+            gr.setValue("date_published", cvrfData["date_published"]);
+        if (!gs.nil(cvrfData["date_published"]))
+            gr.setValue("last_modified", cvrfData["last_modified"]);
+        if (!gs.nil(cvrfData["vulnerability_notes"]))
+            gr.setValue("vulnerability_notes", cvrfData["vulnerability_notes"]);
+        // if (!gs.nil(cvrfData["productMap"]))
+        //     newProductSysIds = this._handleProducts(cvrfData["productMap"]);
+        gr.setValue("affected_products", newProductSysIds);
+        gr.setValue("metrics_status", 1);
+        solutionSysId = gr.update();
+        gs.info('Solution SysId is : ' + solutionSysId);
+        // for (x in cvrfData["cves"]) {
+        //     var cveSysId = this._insertCveRecord(cvrfData["cves"][x]);
+        //     if (!gs.nil(cveSysId)) {
+        //         this._populateCveM2m(cveSysId, solutionSysId);
+        //         this._rollupSolFromNvdToThirdPartyVul(cveSysId, solutionSysId);
+        //     }
+        // }
+    },
+
+    _getSolutionType: function(solTypeString) {
+        var solType = this._typeLib[solTypeString] || 'NONE_AVAILABLE';
+        return solType;
+    },
+
+    // Following are the possible values for solution_type
+    // Workaround, Mitigation, Vendor Fix, None Available, Will Not Fix
+    _typeLib: {
+        "Workaround": "WORKAROUND",
+        "Mitigation": "MITIGATION",
+        "Vendor Fix": "VENDOR_FIX",
+        "None Available": "NONE_AVAILABLE",
+        "Will Not Fix": "WILL_NOT_FIX",
+    },
+
+    /**
+     * This method creates/updates the products
+     * and return the sysIds
+     * @param: productMap - map containing the 
+     * productName as the key and the cpe as the value.
+     */
+    _handleProducts: function(productMap) {
+        var productSysIds = [];
+        var productName;
+        var cpe;
+        var prodSysId;
+        for (var i = 0, keys = Object.keys(productMap), len = keys.length; i < len; i++) {
+            productName = keys[i];
+            cpe = productMap[keys[i]];
+            prodSysId = this._handleProduct(productName, cpe);
+            if (productSysIds.indexOf(prodSysId) == -1) {
+                productSysIds.push(prodSysId);
+            }
+        }
+        return productSysIds;
+    },
+
+    _handleProduct: function(productName, cpe) {
+        var prodSysId;
+        var gr;
+        if (gs.nil(cpe)) {
+            gr = new GlideRecord(this.SOFTWARE_TABLE);
+            gr.addQuery("raw_product", productName);
+            gr.query();
+            if (gr.next()) {
+                prodSysId = gr.getUniqueValue();
+            } else {
+                gr.initialize();
+                gr.setValue("raw_product", productName);
+                gr.setValue("display_name", productName);
+                prodSysId = gr.insert();
+            }
+        } else {
+            gr = new GlideRecord(this.SOFTWARE_TABLE);
+            gr.addQuery("raw_product", cpe);
+            gr.query();
+            if (gr.next()) {
+                prodSysId = gr.getUniqueValue();
+            } else {
+                var swArry = [];
+                swArry = this._fetchSwInfoFromCPE(cpe);
+                gr.initialize();
+                gr.setValue("raw_product", cpe);
+                gr.setValue("display_name", productName);
+                if (swArry.length > 1)
+                    gr.setValue("publisher", swArry[1]);
+                if (swArry.length > 2)
+                    gr.setValue("model", swArry[2]);
+                if (swArry.length > 3)
+                    gr.setValue("version", swArry[3]);
+                if (swArry.length > 4)
+                    gr.setValue("version", gr.getValue("version") + " " + swArry[4]);
+                if (swArry.length > 5)
+                    gr.setValue("edition", swArry[5]);
+                prodSysId = gr.insert();
+            }
+        }
+        return prodSysId;
+    },
+
+    _fetchSoftwareInfo: function (node, productMap, familyName) {
+        try{
+        gs.info("fetch software function called : " + familyName);
+        var productName = node.getAttribute("Name");
+        var cni = node.getChildNodeIterator();
+        
+        while (cni.hasNext()) {//
+            var cn = cni.next();
+            if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Version") {
+                var version = cn.getAttribute("Name");
+                var child1 = cn.getChildNodeIterator();
+                while (child1.hasNext()) {
+                    var nextNode = child1.next();
+                    if (nextNode.getNodeName() == "FullProductName" && !gs.nil(nextNode.getTextContent())) {
+                        var pMap = {};
+                        pMap["familyName"] = familyName;
+                        pMap["productName"] = productName;
+                        pMap["version"] = version;
+                        pMap["value"] = nextNode.getTextContent();
+                        // pMap["product_id"] = nextNode.getAttribute("ProductID");
+                        //productMap[cn.getTextContent()] = gs.nil(cn.getAttribute("CPE")) ? "" : cn.getAttribute("CPE");
+                        // productMap.append(pMap);
+                        productMap[nextNode.getAttribute("ProductID")] = pMap;
+                    }
+                }
+            }
+        }
+        }catch(e){
+            gs.error("Exception in fetch software info : " + e);
+        }
+    },
+    _handleRemediation: function(cvrfData, node, cve) {
+        gs.info('handle remadiation called : ' + cve );
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            if (cn.getNodeName() == "Remediation") {
+                cvrfData["type"] = cn.getAttribute("Type");
+                this._fetchInternalData(cvrfData, cn, cve);
+            }
+        }
+    },
+
+    _fetchInternalData: function(cvrfData, node, cve) {
+        var cni = node.getChildNodeIterator();
+        while (cni.hasNext()) {
+            var cn = cni.next();
+            if (cn.getNodeName() == "Description") {
+                if (cvrfData["description"])
+                    cvrfData["description"] += "<br/><br/>" + "<h4>" + "Solution" + "</h4>" + cn.getTextContent();
+                else
+                    cvrfData["description"] = "<h4>" + "Solution" + "</h4>" + cn.getTextContent();
+                continue;
+            }
+            if (cn.getNodeName() == "URL") {
+                var url = cn.getTextContent();
+                if (cvrfData["url"]) cvrfData["url"] = this._handleUrls(url, cvrfData["url"]);
+                else cvrfData["url"] = this._handleUrls(url);
+                continue;
+            }
+            //need to add code for productID
+        }
+    },
+
+    _handleUrls: function(newUrl, oldUrls) {
+        if (gs.nil(newUrl)) return oldUrls;
+        newUrl = newUrl.replace(/=/g, "&#61;");
+        var newUrlHtml =
+            '<a href="' +
+            newUrl +
+            '" rel="nofollow" target="_blank">' +
+            newUrl +
+            "</a>";
+        if (gs.nil(oldUrls))
+            return newUrlHtml;
+        if (oldUrls.indexOf(">" + newUrl + "</a>") == -1)
+            return oldUrls + "<br />" + newUrlHtml;
+        else return oldUrls;
+    },
+
+    _completeProcess: function() {
+        var integrationProcess = new GlideRecord("sn_vul_integration_process");
+        if (integrationProcess.get(this.processId) && !gs.nil(integrationProcess.getValue('integration_run'))) {
+            integrationProcess.setValue("vi_created", this.inserted);
+            integrationProcess.setValue("vi_updated", this.updated);
+            integrationProcess.setValue("import_vi", this.inserted + this.updated);
+            integrationProcess.update();
+        } else
+            gs.warn("CVRF transform: can not find the integration process when completing the process: " + this.processId);
+    },
+
+    type: 'CVRFSolutionProcessor'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-08-13 05:58:39</sys_created_on>
+        <sys_id>eccd837307713010568cffa08c1ed0bd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CVRFSolutionProcessor</sys_name>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_update_name>sys_script_include_eccd837307713010568cffa08c1ed0bd</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-08-13 05:58:39</sys_updated_on>
+    </sys_script_include>
+</record_update>
