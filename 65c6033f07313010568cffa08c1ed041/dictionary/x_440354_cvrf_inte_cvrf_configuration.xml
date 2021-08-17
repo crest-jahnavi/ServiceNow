@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="CVRF Configuration" max_length="40" name="x_440354_cvrf_inte_cvrf_configuration" type="collection">
+    <element label="CVRF Configuration" max_length="40" name="x_440354_cvrf_inte_cvrf_configuration" sizeclass="6" type="collection">
         <element choice="3" default="NO_AUTH" label="Authentication Type" mandatory="true" max_length="40" name="authentication_type" type="string">
             <choice>
                 <element inactive_on_update="false" label="OAuth 2.0" sequence="0" value="OAUTH_2.0"/>
@@ -7,12 +7,14 @@
                 <element inactive_on_update="false" label="No Auth" sequence="2" value="NO_AUTH"/>
             </choice>
         </element>
+        <element label="End Date" max_length="40" name="end_date" type="glide_date"/>
         <element label="Instance" max_length="32" name="instance" reference="sn_sec_int_impl" type="reference"/>
         <element label="Name" mandatory="true" max_length="40" name="name" type="string"/>
         <element label="OAuth Profile" max_length="32" name="oauth_profile" reference="oauth_entity_profile" type="reference"/>
         <element label="OAuth Provider" max_length="32" name="oauth_provider" reference="oauth_entity" type="reference"/>
         <element label="Password" max_length="255" name="password" type="password2"/>
         <element label="Solution Endpoint" mandatory="true" max_length="1024" name="solution_endpoint" type="url"/>
+        <element label="Start Date" max_length="40" name="start_date" type="glide_date"/>
         <element label="User name" max_length="40" name="user_name" type="string"/>
         <index name="index">
             <element name="instance"/>

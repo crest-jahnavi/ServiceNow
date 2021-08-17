@@ -63,15 +63,15 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
                 continue;
             }
             if (node == "DocumentNotes") {
-                //this._handleDocumentNotes(cvrfData, node);
+                this._handleDocumentNotes(cvrfData, node);
                 continue;
             }
             if (node == "ProductTree") {
-                //this._handleProductTree(cvrfData, node);
+                // this._handleProductTree(cvrfData, node);
                 continue;
             }
             if (node == "DocumentReferences") {
-                //this._handleDocumentReferences(cvrfData, node);
+                this._handleDocumentReferences(cvrfData, node);
                 continue;
             }
 
@@ -86,10 +86,11 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
             cvrfData[node] = textContent + "";
         }
         gs.info("CVRFdata : " + JSON.stringify(cvrfData));
-        //this._populateTables(cvrfData);
+        // this._populateTables(cvrfData);
     },
 
     _populateTables: function (cvrfData) {
+        try{
         var solutionSysId;
         var newProductSysIds;
         var gr = new GlideRecord("sn_vul_solution");
@@ -133,6 +134,9 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
         //         this._rollupSolFromNvdToThirdPartyVul(cveSysId, solutionSysId);
         //     }
         // }
+        }catch(e){
+            gs.error("Exception in populate tables: " + e);
+        }
     },
 
     _getSolutionType: function (solTypeString) {
@@ -140,7 +144,17 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
         return solType;
     },
 
+    _typeLib: {
+        0: "WORKAROUND",
+        1: "MITIGATION",
+        2: "VENDOR_FIX",
+        3: "NONE_AVAILABLE",
+        4: "WILL_NOT_FIX",
+        5: "ENTITLEMENT",
+    },
+
     _handleDocumentReferences: function (cvrfData, nodes) {
+        try{
         //var cni = node.getChildNodeIterator();
         for (var node in nodes) {
             if (node == "Reference") {
@@ -150,6 +164,9 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
                     }
                 }
             }
+        }
+        }catch(e){
+            gs.error("Exception in handle document references : " + e);
         }
 
     },
@@ -180,12 +197,7 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
                 }
 
             }
-            var cni = node.getChildNodeIterator();
-            while (cni.hasNext()) {// first Branch node typr vendor
-                gs.info('checkpoint 1.3');
-                var cn1 = cni.next();
-
-            }
+            
             cvrfData["productMap"] = productMap;
         } catch (e) {
             gs.error("Exception in producttree : " + e);
@@ -211,13 +223,15 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
 
 
     _handleVulnerability: function (cvrfData, nodes) {
-        gs.info('vulnerability called : ');
+        try{
         if (gs.nil(nodes))
             return;
 
         var cve = "";
         var notes = "";
         for (var node in nodes) {
+            gs.info("Vulnerability : " + JSON.stringify(node));
+        
             var textContent = nodes[node];
             if (node == "Remediations" && !cvrfData["type"]) {
                 this._handleRemediation(cvrfData, nodes[node], cve);
@@ -239,6 +253,9 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
         if (cvrfData["vulnerability_notes"])
             cvrfData["vulnerability_notes"] += additionalData;
         else cvrfData["vulnerability_notes"] = additionalData;
+        }catch(e){
+            gs.error("Exception in handlevulnerability : " + e);
+        }
     },
 
     _getCveNotes: function (nodes) {
@@ -260,6 +277,7 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
     },
 
     _fetchInternalData: function (cvrfData, nodes, cve) {
+        try{
         for (var node in nodes) {
             var textContent = nodes[node];
             if (node == "Description") {
@@ -276,6 +294,9 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
                 continue;
             }
             //need to add code for productID
+        }
+        }catch(e){
+            gs.error("Exception in fetchInternaldata : " + e);
         }
     },
 
@@ -296,6 +317,7 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
     },
 
     _handleDocumentTracking: function (cvrfData, nodes) {
+        try{
 
         for (var node in nodes) {
 
@@ -314,6 +336,9 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
             }
         }
         gs.info("Node Last " + JSON.stringify(cvrfData));
+        }catch(e){
+            gs.info("Exception in handle document trecking : " + e);
+        }
     },
 
     _convertToSNFriendlyTime: function (timeStr) {
@@ -325,6 +350,7 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
 
     _handleIdentification: function (cvrfData, nodes) {
 
+        try{
         for (var node in nodes) {
             var textContent = nodes[node];
             if (node == "ID") {
@@ -334,9 +360,13 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
                 }
             }
         }
+        }catch(e){
+            gs.info("Exception in handleIdentication : " + e);
+        }
     },
 
     _completeProcess: function () {
+        try{
         var integrationProcess = new GlideRecord("sn_vul_integration_process");
         if (integrationProcess.get(this.processId) && !gs.nil(integrationProcess.getValue('integration_run'))) {
             integrationProcess.setValue("vi_created", this.inserted);
@@ -345,6 +375,9 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
             integrationProcess.update();
         } else
             gs.warn("CVRF transform: can not find the integration process when completing the process: " + this.processId);
+        }catch(e){
+            gs.info("Exception in complete process : " + e);
+        }
     },
 
     type: 'CVRFCiscoJSONSolutionProcessor'
@@ -353,13 +386,13 @@ CVRFCiscoJSONSolutionProcessor.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 05:57:11</sys_created_on>
         <sys_id>3b7dc37307713010568cffa08c1ed01b</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>CVRFCiscoJSONSolutionProcessor</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_include_3b7dc37307713010568cffa08c1ed01b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-13 05:57:11</sys_updated_on>
+        <sys_updated_on>2021-08-13 10:47:13</sys_updated_on>
     </sys_script_include>
 </record_update>

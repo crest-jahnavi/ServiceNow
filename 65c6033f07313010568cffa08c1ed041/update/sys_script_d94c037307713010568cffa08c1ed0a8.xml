@@ -155,11 +155,15 @@
 			schedular.integration_factory_script = "(function (integrationProcessGr) {return new x_440354_cvrf_inte.CVRFSolutionIntegration();})(integrationProcessGr);";
 			var schedular_id = schedular.insert();
 
-			var m2m = new GlideRecord("sn_vul_int_data_src");
-			m2m.initialize();
-			m2m.sys_data_source = "3a4a973f07713010568cffa08c1ed0e6";
-			m2m.sn_vul_integration = schedular_id;
-			m2m.insert();
+			var dataSources = ["3a4a973f07713010568cffa08c1ed0e6", "dcd17cdd07c2b010568cffa08c1ed026", "a1f13cdd07c2b010568cffa08c1ed0eb", "291234110706b010568cffa08c1ed093"]
+
+			for (var x in dataSources) {
+				var m2m = new GlideRecord("sn_vul_int_data_src");
+				m2m.initialize();
+				m2m.sys_data_source = dataSources[x];
+				m2m.sn_vul_integration = schedular_id;
+				m2m.insert();
+			}
 
 
 			/*var instanceParameters = new GlideRecord("sn_sec_int_impl_config");
@@ -187,7 +191,9 @@
 			//"bc702d9f2fb130101767d8ddf699b6d0": current.token_url,
 			//"9440ad9f2fb130101767d8ddf699b6de": current.authorization_url,
 			"6b4c1b7f07713010568cffa08c1ed05d": current.oauth_provider,
-			"616c53bf07713010568cffa08c1ed0ad": current.oauth_profile
+			"616c53bf07713010568cffa08c1ed0ad": current.oauth_profile,
+			"8d93ff090702b010568cffa08c1ed0e4": current.start_date,
+			"eea373490702b010568cffa08c1ed0eb": current.end_date
 		}
 		var instanceParameters;
 		for (var x in d) {
@@ -212,7 +218,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>d94c037307713010568cffa08c1ed0a8</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>8</sys_mod_count>
         <sys_name>ValidateConfiguration</sys_name>
         <sys_overrides/>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
@@ -220,7 +226,7 @@
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_d94c037307713010568cffa08c1ed0a8</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-13 08:35:31</sys_updated_on>
+        <sys_updated_on>2021-08-17 10:36:07</sys_updated_on>
         <template/>
         <when>before</when>
     </sys_script>

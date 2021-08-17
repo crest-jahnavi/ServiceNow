@@ -9,7 +9,7 @@
         <name>CVRFSolutionProcessor</name>
         <script><![CDATA[var CVRFSolutionProcessor = Class.create();
 CVRFSolutionProcessor.prototype = {
-    initialize: function(domain, source, processId) {
+    initialize: function (domain, source, processId) {
         this.processId = processId;
         this.inserted = 0;
         this.updated = 0;
@@ -19,41 +19,56 @@ CVRFSolutionProcessor.prototype = {
         this.productCategoryLib = {};
         this.domain = domain;
         this.SOURCE = source;
+        this.SOFTWARE_TABLE = "sn_vul_software";
+        this.PRODUCT_CATEGORY_TABLE = "sn_vul_product_category";
     },
 
-    process: function(attachmentGr) {
-        try{
-        gs.info('process function called');
-        if (!gs.nil(attachmentGr)) {
-            var attachment = new GlideSysAttachment();
-            var stream = attachment.getContentStream(attachmentGr.sys_id);
-            //Construct XMLDocument2 with input stream as argument.
-            var xmlDoc = new XMLDocument2(stream);
-            var start = new GlideDateTime();
-            var node = xmlDoc.getFirstNode("/cvrfdoc");
-            if (null != node) this._handleCvrfdoc(node);
-            this._completeProcess();
-        } else {
-            gs.warn("CVRF transform: found empty attachment gliderecord");
-        }
-        }catch(e){
+    process: function (attachmentGr) {
+        try {
+            gs.info('process function called');
+            if (!gs.nil(attachmentGr)) {
+                var attachment = new GlideSysAttachment();
+                var stream = attachment.getContentStream(attachmentGr.sys_id);
+                //Construct XMLDocument2 with input stream as argument.
+                var xmlDoc = new XMLDocument2(stream);
+                var start = new GlideDateTime();
+                var version;
+                var node = xmlDoc.getFirstNode("/cvrf:cvrfdoc") ? xmlDoc.getFirstNode("/cvrf:cvrfdoc") : xmlDoc.getFirstNode("/cvrfdoc");
+                // gs.info("node : " + node.getNodeName());
+                var versionData = node.getAttributes() ;
+                var attribute = versionData["xmlns:cvrf"];
+                gs.info("Versiondata : " + attribute);
+                if (attribute.includes("1.1"))
+                    version = 1.1;
+                else if(attribute.includes("1.2"))
+                    version = 1.2;
+                gs.info("Version is : " + version);
+                if (null != node) this._handleCvrfdoc(node, version);
+                this._completeProcess();
+                // var gr1 = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration_update");
+                // gr1.deleteMultiple();
+            } else {
+                gs.warn("CVRF transform: found empty attachment gliderecord");
+            }
+        } catch (e) {
             gs.error("Exception in process: " + e);
         }
     },
 
-    _handleCvrfdoc: function(node) {
+    _handleCvrfdoc: function (node, version) {
         var cvrfData = {};
         cvrfData["cves"] = [];
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
             var nodeName = cn.getNodeName();
+            gs.info("Node name : " + nodeName + " Node value : " + cn.getTextContent());
             var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
-            if (nodeName == "DocumentTitle") {
+            if (nodeName == "DocumentTitle" || nodeName == "cvrf:DocumentTitle") {
                 cvrfData["DocumentTitle"] = textContent;
                 continue;
             }
-            if (nodeName == "DocumentTracking") {
+            if (nodeName == "DocumentTracking" || nodeName == "cvrf:DocumentTracking") {
                 this._handleDocumentTracking(cvrfData, cn);
                 continue;
             }
@@ -61,15 +76,15 @@ CVRFSolutionProcessor.prototype = {
                 this._handleVulnerability(cvrfData, cn);
                 continue;
             }
-            if (nodeName == "DocumentNotes") {
+            if (nodeName == "DocumentNotes" || nodeName == "cvrf:DocumentNotes") {
                 this._handleDocumentNotes(cvrfData, cn);
                 continue;
             }
             if (nodeName == "ProductTree") {
-                this._handleProductTree(cvrfData, cn);
+                this._handleProductTree(cvrfData, cn, version);
                 continue;
             }
-            if (nodeName == "DocumentReferences") {
+            if (nodeName == "DocumentReferences" || nodeName == "cvrf:DocumentReferences") {
                 this._handleDocumentReferences(cvrfData, cn);
                 continue;
             }
@@ -79,7 +94,7 @@ CVRFSolutionProcessor.prototype = {
                     textContent.trim().length == 0) ||
                 nodeName == "DocumentType" ||
                 nodeName == "DocumentPublisher" ||
-                nodeName == "DocumentDistribution" 
+                nodeName == "DocumentDistribution"
             )
                 continue;
             cvrfData[nodeName] = textContent + "";
@@ -88,28 +103,32 @@ CVRFSolutionProcessor.prototype = {
         this._populateTables(cvrfData);
     },
 
-    _handleDocumentReferences: function(cvrfData, node) {
-        var cni = node.getChildNodeIterator();
-        while (cni.hasNext()) {
-            var cn = cni.next();
-            if (cn.getNodeName() == "Reference" && !gs.nil(cn.getTextContent())) {
-                var child = cn.getChildNodeIterator();
-                while (child.hasNext()) {
-                    var nextNode = child.next();
-                    if (nextNode.getNodeName() == "URL" && !gs.nil(cn.getTextContent())) {
-                        var url = nextNode.getTextContent();
-                        if (cvrfData["url"])
-                            cvrfData["url"] = this._handleUrls(url, cvrfData["url"]);
-                        else
-                            cvrfData["url"] = this._handleUrls(url);
-                        break;
+    _handleDocumentReferences: function (cvrfData, node) {
+        try {
+            var cni = node.getChildNodeIterator();
+            while (cni.hasNext()) {
+                var cn = cni.next();
+                if ((cn.getNodeName() == "Reference" || cn.getNodeName() == "cvrf:Reference") && !gs.nil(cn.getTextContent())) {
+                    var child = cn.getChildNodeIterator();
+                    while (child.hasNext()) {
+                        var nextNode = child.next();
+                        if ((nextNode.getNodeName() == "URL" || nextNode.getNodeName() == "cvrf:URL") && !gs.nil(cn.getTextContent())) {
+                            var url = nextNode.getTextContent();
+                            if (cvrfData["url"])
+                                cvrfData["url"] = this._handleUrls(url, cvrfData["url"]);
+                            else
+                                cvrfData["url"] = this._handleUrls(url);
+                            break;
+                        }
                     }
                 }
             }
+        } catch (e) {
+            gs.error("Exception in handledocument references : " + e);
         }
     },
 
-    _handleDocumentNotes: function(cvrfData, node) {
+    _handleDocumentNotes: function (cvrfData, node) {
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
@@ -125,32 +144,32 @@ CVRFSolutionProcessor.prototype = {
         }
     },
 
-    _handleDocumentTracking: function(cvrfData, node) {
+    _handleDocumentTracking: function (cvrfData, node) {
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
             var nodeName = cn.getNodeName();
             var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
-            if (nodeName == "Identification") {
+            if (nodeName == "Identification" || nodeName == "cvrf:Identification") {
                 this._handleIdentification(cvrfData, cn);
                 continue;
             }
-            if (nodeName == "InitialReleaseDate") {
+            if (nodeName == "InitialReleaseDate" || nodeName == "cvrf:InitialReleaseDate") {
                 cvrfData["date_published"] = this._convertToSNFriendlyTime(textContent);
                 continue;
             }
-            if (nodeName == "CurrentReleaseDate") {
+            if (nodeName == "CurrentReleaseDate" || nodeName == "cvrf:CurrentReleaseDate") {
                 cvrfData["last_modified"] = this._convertToSNFriendlyTime(textContent);
                 continue;
             }
         }
     },
 
-    _handleIdentification: function(rhsa, node) {
+    _handleIdentification: function (rhsa, node) {
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
-            if (cn.getNodeName() == "ID") {
+            if (cn.getNodeName() == "ID" || cn.getNodeName() == "cvrf:ID") {
                 if (!gs.nil(cn.getTextContent())) {
                     rhsa["id"] = cn.getTextContent();
                     break;
@@ -158,15 +177,15 @@ CVRFSolutionProcessor.prototype = {
             }
         }
     },
-    
-    _convertToSNFriendlyTime: function(timeStr) {
+
+    _convertToSNFriendlyTime: function (timeStr) {
         if (gs.nil(timeStr))
             return;
         timeStr = timeStr.replace(/T/g, " ").replace(/Z/g, "");
         return new GlideDateTime(timeStr);
     },
 
-    _handleVulnerability: function(cvrfData, node){
+    _handleVulnerability: function (cvrfData, node) {
         gs.info('vulnerability called : ');
         if (gs.nil(node))
             return;
@@ -200,7 +219,8 @@ CVRFSolutionProcessor.prototype = {
         else cvrfData["vulnerability_notes"] = additionalData;
     },
 
-    _getCveNotes: function(node) {
+    _getCveNotes: function (node) {
+        gs.info("Notes : " + JSON.stringify(node));
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
@@ -210,46 +230,74 @@ CVRFSolutionProcessor.prototype = {
         }
     },
 
-	_handleProductTree: function (cvrfData, node) {
-        try{
-        gs.info("handle producttree function called");
-        var productMap = {};
-        var cni = node.getChildNodeIterator();
-        gs.info("Type of node : " + typeof(node));
-        gs.info('checkpoint 1');
-        while (cni.hasNext()) {// first Branch node typr vendor
-            gs.info('checkpoint 1.3');
-            var cn1 = cni.next();
-            if(cn1.getNodeName() == "Branch" && cn1.getAttribute("Type") == "Vendor"){
-                gs.info("checkpoint 1.5 : " + cn1.getNodeName() + cn1.getAttribute("Type") + JSON.stringify(cn1) + typeof(cn1));
-                var child2 = cn1.getChildNodeIterator();
-                gs.info("checkpoint 2");
-                while (child2.hasNext()) {//iterate Product Family
-                    var cn = child2.next();
-                    var familyName = cn.getAttribute("Name");
-                    gs.info("checkpoint3");
-                    if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Family") {
-                        var child1 = cn.getChildNodeIterator();
-                        while (child1.hasNext()) {// iterate product name
-                            var nextNode = child1.next();
-                            if (nextNode.getNodeName() == "Branch" && nextNode.getAttribute("Type") == "Product Name") {
-                                this._fetchSoftwareInfo(nextNode, productMap, familyName);
+    _handleProductTree: function (cvrfData, node, version) {
+        try {
+            gs.info("producttree node : " + node.getNodeName());
+            gs.info("In product tree with version : " + version);
+            gs.info("handle producttree function called");
+            var productMap = {};
+            var cni = node.getChildNodeIterator();
+            if (version == 1.1) {
+                while (cni.hasNext()) {// first Branch node typr vendor
+                    var cn1 = cni.next();
+                    if (cn1.getNodeName() == "Branch" && cn1.getAttribute("Type") == "Vendor") {
+                        var child2 = cn1.getChildNodeIterator();
+                        while (child2.hasNext()) {//iterate Product Family
+                            var cn = child2.next();
+                            var familyName = cn.getAttribute("Name");
+                            if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Family") {
+                                var child1 = cn.getChildNodeIterator();
+                                while (child1.hasNext()) {// iterate product name
+                                    var nextNode = child1.next();
+                                    if (nextNode.getNodeName() == "Branch" && nextNode.getAttribute("Type") == "Product Name") {
+                                        this._fetchSoftwareInfo(nextNode, productMap, familyName);
+                                    }
+                                }
+                                //break;
                             }
                         }
-                        //break;
                     }
                 }
             }
-        }
-        cvrfData["productMap"] = productMap;
-        }catch(e){
+            else {
+                while (cni.hasNext()) {// first Branch node typr vendor
+                    var n1 = cni.next();
+                    gs.info("N1 node : " + n1.getNodeName());
+                    if (n1.getNodeName() == "Branch" /*&& n1.getAttribute("Type") == "Vendor"*/) {
+                        var n2 = n1.getChildNodeIterator();
+                        while (n2.hasNext()) {
+                            var n3 = n2.next();
+                            if (n3.getNodeName() == "Branch" && n3.getAttribute("Type") == "Product Name") {
+                                gs.info("N3 node : " + n3.getNodeName());
+                                var n4 = n3.getChildNodeIterator();
+                                while (n4.hasNext()) {
+                                    var n5 = n4.next();
+                                    gs.info("N5 node : " + n5);
+                                    if (n5.getNodeName() == "FullProductName" && !gs.nil(n5.getTextContent())) {
+                                        var pMap = {};
+                                        var productName = n5.getTextContent();
+                                        pMap["productName"] = productName;
+                                        pMap["value"] = n5.getTextContent();
+                                        productMap[n5.getAttribute("ProductID")] = pMap;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            gs.info("Productmap : " + JSON.stringify(productMap));
+            cvrfData["productMap"] = productMap;
+
+        } catch (e) {
             gs.error("Exception in producttree : " + e);
         }
     },
 
-    _populateTables: function(cvrfData) {
+    _populateTables: function (cvrfData) {
         var solutionSysId;
         var newProductSysIds;
+        var newProductCategories;
         var gr = new GlideRecord("sn_vul_solution");
         gr.addQuery("source_id", cvrfData["id"]);
         gr.addQuery("source", this.SOURCE);
@@ -278,22 +326,149 @@ CVRFSolutionProcessor.prototype = {
             gr.setValue("last_modified", cvrfData["last_modified"]);
         if (!gs.nil(cvrfData["vulnerability_notes"]))
             gr.setValue("vulnerability_notes", cvrfData["vulnerability_notes"]);
-        // if (!gs.nil(cvrfData["productMap"]))
-        //     newProductSysIds = this._handleProducts(cvrfData["productMap"]);
+        if (!gs.nil(cvrfData["productMap"])) {
+            newProductSysIds = this._handleProducts(cvrfData["productMap"]);
+            newProductCategories = this._handleProductCategories(cvrfData["productMap"]);
+        }
         gr.setValue("affected_products", newProductSysIds);
+        gr.setValue("product_category", newProductCategories);
         gr.setValue("metrics_status", 1);
         solutionSysId = gr.update();
         gs.info('Solution SysId is : ' + solutionSysId);
-        // for (x in cvrfData["cves"]) {
-        //     var cveSysId = this._insertCveRecord(cvrfData["cves"][x]);
-        //     if (!gs.nil(cveSysId)) {
-        //         this._populateCveM2m(cveSysId, solutionSysId);
-        //         this._rollupSolFromNvdToThirdPartyVul(cveSysId, solutionSysId);
-        //     }
-        // }
+        for (x in cvrfData["cves"]) {
+            var cveSysId = this._insertCveRecord(cvrfData["cves"][x]);
+            if (!gs.nil(cveSysId)) {
+                this._populateCveM2m(cveSysId, solutionSysId);
+                this._rollupSolFromNvdToThirdPartyVul(cveSysId, solutionSysId);
+            }
+        }
     },
 
-    _getSolutionType: function(solTypeString) {
+    _handleProductCategories: function (productMap) {
+        var productSysIds = [];
+        var productName;
+        var cpe;
+        var prodSysId;
+        for (var i = 0, keys = Object.keys(productMap), len = keys.length; i < len; i++) {
+            //productName = keys[i];
+            //cpe = productMap[keys[i]];
+            prodSysId = this._handleProductCategory(productMap[keys[i]]);
+            
+            if (productSysIds.indexOf(prodSysId) == -1 && !gs.nil(prodSysId)) {
+                productSysIds.push(prodSysId);
+            }
+        }
+        return productSysIds;
+    },
+
+    _handleProductCategory: function (product) {
+        var prodSysId;
+        var gr;
+        var pId = product["familyName"];
+        if (!gs.nil(pId)) {
+            gr = new GlideRecord(this.PRODUCT_CATEGORY_TABLE);
+            gr.addQuery("category", pId);
+            gr.query();
+            if (gr.next()) {
+                gr.setValue("category", pId);
+                //gr.setValue("display_name", pId);
+                gr.update();
+                prodSysId = gr.getUniqueValue();
+            } else {
+                gr.initialize();
+                gr.setValue("category", pId);
+                //gr.setValue("display_name", pId);//product["productName"]);
+                prodSysId = gr.insert();
+            }
+            return prodSysId;
+        }
+
+        return null;
+    },
+
+    _populateCveM2m: function (vulSysId, solSysId) {
+        var gr = new GlideRecord("sn_vul_m2m_vulnerability_solution");
+        if (gr.isValid()) {
+            if (this.domain) gr.addQuery("sys_domain", this.domain);
+            gr.addQuery("sn_vul_entry", vulSysId);
+            gr.addQuery("sn_vul_solution", solSysId);
+            gr.query();
+            if (!gr.next()) {
+                gr.initialize();
+                if (this.domain) gr.setValue("sys_domain", this.domain);
+                gr.setValue("sn_vul_entry", vulSysId);
+                gr.setValue("sn_vul_solution", solSysId);
+                gr.insert();
+            }
+        }
+    },
+
+    _insertCveRecord: function (cve) {
+        if (gs.nil(cve) || !cve.startsWith("CVE")) return;
+        var gr = new GlideRecord("sn_vul_nvd_entry");
+        gr.addQuery("id", cve);
+        gr.query();
+        if (gr.next())
+            return gr.getUniqueValue();
+        else {
+            gr.initialize();
+            gr.setValue("id", cve);
+            return gr.insert();
+        }
+    },
+
+    _rollupSolFromNvdToThirdPartyVul: function (cveSysId, solSysId) {
+        var m2m = new GlideRecord("sn_vul_m2m_entry_cve");
+        if (this.domain)
+            m2m.addQuery("sys_domain", this.domain);
+        m2m.addQuery("sn_vul_nvd_entry", cveSysId);
+        m2m.query();
+
+        var superSedence = new sn_vul.SolutionSupersedenceUtil();
+        while (m2m.next()) {
+            var vulSysId = m2m.getValue("sn_vul_entry");
+            var isExcluded = superSedence.isEligibleForExclusion(vulSysId, "Red Hat");
+            var vulSol = new GlideRecord("sn_vul_m2m_vulnerability_solution");
+            if (this.domain)
+                vulSol.addQuery("sys_domain", this.domain);
+            vulSol.addQuery("sn_vul_entry", vulSysId);
+            vulSol.addQuery("sn_vul_solution", solSysId);
+            vulSol.query();
+            if (vulSol.next()) {
+                var inherited = vulSol.getValue('is_inherited');
+                if (inherited == 'true' || inherited == '1')
+                    vulSol.setValue('is_inherited', false);
+                if (vulSol.getValue('exclusion_type') != this.MANUAL) {
+                    vulSol.setValue('is_excluded', isExcluded);
+                    vulSol.setValue('exclusion_type', this.RULE_BASED);
+                }
+                vulSol.update();
+                this._setSolutionUpdated(solSysId);
+            } else {
+                vulSol.initialize();
+                if (this.domain)
+                    vulSol.setValue("sys_domain", this.domain);
+                vulSol.setValue("sn_vul_entry", vulSysId);
+                vulSol.setValue("sn_vul_solution", solSysId);
+                vulSol.setValue('is_inherited', false);
+                vulSol.setValue('is_excluded', isExcluded);
+                vulSol.setValue('exclusion_type', this.RULE_BASED);
+                vulSol.insert();
+                this._setSolutionUpdated(solSysId);
+            }
+        }
+    },
+
+    _setSolutionUpdated: function (solutionId) {
+        var sol = new GlideRecord('sn_vul_solution');
+        sol.get(solutionId);
+        sol.autoSysFields(false);
+        sol.setValue('sys_updated_on', new GlideDateTime().toString());
+        sol.update();
+    },
+
+
+    _getSolutionType: function (solTypeString) {
         var solType = this._typeLib[solTypeString] || 'NONE_AVAILABLE';
         return solType;
     },
@@ -314,15 +489,15 @@ CVRFSolutionProcessor.prototype = {
      * @param: productMap - map containing the 
      * productName as the key and the cpe as the value.
      */
-    _handleProducts: function(productMap) {
+    _handleProducts: function (productMap) {
         var productSysIds = [];
         var productName;
         var cpe;
         var prodSysId;
         for (var i = 0, keys = Object.keys(productMap), len = keys.length; i < len; i++) {
-            productName = keys[i];
-            cpe = productMap[keys[i]];
-            prodSysId = this._handleProduct(productName, cpe);
+            //productName = keys[i];
+            //cpe = productMap[keys[i]];
+            prodSysId = this._handleProduct(productMap[keys[i]], keys[i]);
             if (productSysIds.indexOf(prodSysId) == -1) {
                 productSysIds.push(prodSysId);
             }
@@ -330,82 +505,63 @@ CVRFSolutionProcessor.prototype = {
         return productSysIds;
     },
 
-    _handleProduct: function(productName, cpe) {
+    _handleProduct: function (product, pId) {
         var prodSysId;
         var gr;
-        if (gs.nil(cpe)) {
-            gr = new GlideRecord(this.SOFTWARE_TABLE);
-            gr.addQuery("raw_product", productName);
-            gr.query();
-            if (gr.next()) {
-                prodSysId = gr.getUniqueValue();
-            } else {
-                gr.initialize();
-                gr.setValue("raw_product", productName);
-                gr.setValue("display_name", productName);
-                prodSysId = gr.insert();
-            }
+
+        gr = new GlideRecord(this.SOFTWARE_TABLE);
+        gr.addQuery("raw_product", pId);
+        gr.query();
+        if (gr.next()) {
+            gr.setValue("raw_product", pId);
+            gr.setValue("display_name", pId);
+            gr.setValue("version", product["version"])
+            gr.update();
+            prodSysId = gr.getUniqueValue();
         } else {
-            gr = new GlideRecord(this.SOFTWARE_TABLE);
-            gr.addQuery("raw_product", cpe);
-            gr.query();
-            if (gr.next()) {
-                prodSysId = gr.getUniqueValue();
-            } else {
-                var swArry = [];
-                swArry = this._fetchSwInfoFromCPE(cpe);
-                gr.initialize();
-                gr.setValue("raw_product", cpe);
-                gr.setValue("display_name", productName);
-                if (swArry.length > 1)
-                    gr.setValue("publisher", swArry[1]);
-                if (swArry.length > 2)
-                    gr.setValue("model", swArry[2]);
-                if (swArry.length > 3)
-                    gr.setValue("version", swArry[3]);
-                if (swArry.length > 4)
-                    gr.setValue("version", gr.getValue("version") + " " + swArry[4]);
-                if (swArry.length > 5)
-                    gr.setValue("edition", swArry[5]);
-                prodSysId = gr.insert();
-            }
+            gr.initialize();
+            gr.setValue("raw_product", pId);
+            gr.setValue("display_name", pId);//product["productName"]);
+            gr.setValue("version", product["version"])
+            prodSysId = gr.insert();
         }
+
         return prodSysId;
     },
 
     _fetchSoftwareInfo: function (node, productMap, familyName) {
-        try{
-        gs.info("fetch software function called : " + familyName);
-        var productName = node.getAttribute("Name");
-        var cni = node.getChildNodeIterator();
-        
-        while (cni.hasNext()) {//
-            var cn = cni.next();
-            if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Version") {
-                var version = cn.getAttribute("Name");
-                var child1 = cn.getChildNodeIterator();
-                while (child1.hasNext()) {
-                    var nextNode = child1.next();
-                    if (nextNode.getNodeName() == "FullProductName" && !gs.nil(nextNode.getTextContent())) {
-                        var pMap = {};
-                        pMap["familyName"] = familyName;
-                        pMap["productName"] = productName;
-                        pMap["version"] = version;
-                        pMap["value"] = nextNode.getTextContent();
-                        // pMap["product_id"] = nextNode.getAttribute("ProductID");
-                        //productMap[cn.getTextContent()] = gs.nil(cn.getAttribute("CPE")) ? "" : cn.getAttribute("CPE");
-                        // productMap.append(pMap);
-                        productMap[nextNode.getAttribute("ProductID")] = pMap;
+        try {
+            gs.info("fetch software function called : " + familyName);
+            var productName = node.getAttribute("Name");
+            var cni = node.getChildNodeIterator();
+
+            while (cni.hasNext()) {//
+                var cn = cni.next();
+                if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Version") {
+                    var version = cn.getAttribute("Name");
+                    var child1 = cn.getChildNodeIterator();
+                    while (child1.hasNext()) {
+                        var nextNode = child1.next();
+                        if (nextNode.getNodeName() == "FullProductName" && !gs.nil(nextNode.getTextContent())) {
+                            var pMap = {};
+                            pMap["familyName"] = familyName;
+                            pMap["productName"] = productName;
+                            pMap["version"] = version;
+                            pMap["value"] = nextNode.getTextContent();
+                            // pMap["product_id"] = nextNode.getAttribute("ProductID");
+                            //productMap[cn.getTextContent()] = gs.nil(cn.getAttribute("CPE")) ? "" : cn.getAttribute("CPE");
+                            // productMap.append(pMap);
+                            productMap[nextNode.getAttribute("ProductID")] = pMap;
+                        }
                     }
                 }
             }
-        }
-        }catch(e){
+        } catch (e) {
             gs.error("Exception in fetch software info : " + e);
         }
     },
-    _handleRemediation: function(cvrfData, node, cve) {
-        gs.info('handle remadiation called : ' + cve );
+    _handleRemediation: function (cvrfData, node, cve) {
+        gs.info('handle remadiation called : ' + cve);
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
@@ -416,7 +572,7 @@ CVRFSolutionProcessor.prototype = {
         }
     },
 
-    _fetchInternalData: function(cvrfData, node, cve) {
+    _fetchInternalData: function (cvrfData, node, cve) {
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
@@ -437,7 +593,7 @@ CVRFSolutionProcessor.prototype = {
         }
     },
 
-    _handleUrls: function(newUrl, oldUrls) {
+    _handleUrls: function (newUrl, oldUrls) {
         if (gs.nil(newUrl)) return oldUrls;
         newUrl = newUrl.replace(/=/g, "&#61;");
         var newUrlHtml =
@@ -453,7 +609,7 @@ CVRFSolutionProcessor.prototype = {
         else return oldUrls;
     },
 
-    _completeProcess: function() {
+    _completeProcess: function () {
         var integrationProcess = new GlideRecord("sn_vul_integration_process");
         if (integrationProcess.get(this.processId) && !gs.nil(integrationProcess.getValue('integration_run'))) {
             integrationProcess.setValue("vi_created", this.inserted);
@@ -470,13 +626,13 @@ CVRFSolutionProcessor.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 05:58:39</sys_created_on>
         <sys_id>eccd837307713010568cffa08c1ed0bd</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>47</sys_mod_count>
         <sys_name>CVRFSolutionProcessor</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_include_eccd837307713010568cffa08c1ed0bd</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-13 05:58:39</sys_updated_on>
+        <sys_updated_on>2021-08-17 11:55:47</sys_updated_on>
     </sys_script_include>
 </record_update>
