@@ -13,6 +13,7 @@
         <script><![CDATA[function onLoad() {
 	//Type appropriate comment here, and begin script below
 	var authType = g_form.getValue('authentication_type');
+	var Type = g_form.getValue('type');
 	var authFields = {
 		"BASIC_AUTH": [
 			/*"basic_auth_credential_name",
@@ -31,12 +32,20 @@
 			"authentication_endpoint"*/
 			"oauth_profile",
 			"oauth_provider"
+		],
+		"NO_AUTH":[
+			"name",
+			"authentication_type",
+			"solution_endpoint",
+			"start_date",
+			"end_date"
 		]
 	};
 	var actionOnFields = {
 		hide: [],
 		show: []
 	};
+	if (Type == "API_BASED"){
 	if (authType == "NO_AUTH") {
 		actionOnFields.hide = authFields["BASIC_AUTH"].concat(authFields["OAUTH_2.0"]);
 	} else if (authType == "BASIC_AUTH") {
@@ -45,6 +54,11 @@
 	} else if (authType == "OAUTH_2.0") {
 		actionOnFields.hide = authFields["BASIC_AUTH"];
 		actionOnFields.show = authFields["OAUTH_2.0"];
+	}
+		actionOnFields.show = actionOnFields.show.concat(authFields["NO_AUTH"]);
+	}else{
+		actionOnFields.hide = authFields["BASIC_AUTH"].concat(authFields["OAUTH_2.0"]).concat(authFields["NO_AUTH"]);
+		
 	}
 
 
@@ -62,9 +76,9 @@
 
 
 	var sections = g_form.getSections().forEach(function (section) {
-		if (section.id == 'section-1d6a47ff07313010568cffa08c1ed0b5' && authType == "BASIC_AUTH")
+		if (section.id == 'section-1d6a47ff07313010568cffa08c1ed0b5' && authType == "BASIC_AUTH" && Type != "FILE_UPLOAD")
 			section.style.display = 'block';
-		else if (section.id == 'section-196a47ff07313010568cffa08c1ed0b6' && authType == "OAUTH_2.0")
+		else if (section.id == 'section-196a47ff07313010568cffa08c1ed0b6' && authType == "OAUTH_2.0" && Type != "FILE_UPLOAD")
 			section.style.display = 'block';
 		else if (section.id == 'section-1d6a47ff07313010568cffa08c1ed0b5' || section.id == 'section-196a47ff07313010568cffa08c1ed0b6')
 			section.style.display = 'none';
@@ -77,7 +91,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>78a84f7f07313010568cffa08c1ed050</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>Display integration fields</sys_name>
         <sys_overrides/>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
@@ -85,7 +99,7 @@
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_client_78a84f7f07313010568cffa08c1ed050</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-13 05:48:12</sys_updated_on>
+        <sys_updated_on>2021-08-18 12:46:24</sys_updated_on>
         <table>x_440354_cvrf_inte_cvrf_configuration</table>
         <type>onLoad</type>
         <ui_type>0</ui_type>

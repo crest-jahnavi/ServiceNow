@@ -69,52 +69,54 @@ CVRFUtil.prototype = {
                     var title = update.advisoryTitle;
                     var initRel = update.firstPublished;
                     var CVRFUrl = update.cvrfUrl;
-                    initRel = this._convertToSNFriendlyTime(initRel);
-                    var currentRel = update.lastUpdated;
-                    currentRel = this._convertToSNFriendlyTime(currentRel);
+                    if (CVRFUrl != "" && CVRFUrl != "NA") {
+                        initRel = this._convertToSNFriendlyTime(initRel);
+                        var currentRel = update.lastUpdated;
+                        currentRel = this._convertToSNFriendlyTime(currentRel);
 
-                    var gr = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration_update");
-                    if (domain)
-                        gr.addQuery("sys_domain", domain);
-                    else
-                        gr.addQuery("sys_domain", "global");
-                    gr.addQuery("id", id);
-                    gr.query();
-                    if (gr.next()) {
-                        var oldCurrentRel = gr.last_modified_date;
-                        oldCurrentRel = new GlideDateTime(oldCurrentRel);
-
-                        var needImport = true;
-                        // if the new release date is larger than the current release date
-                        // import is needed
-                        if (currentRel.compareTo(oldCurrentRel) > 0)
-                            needImport = true;
-                        // if the new release date is the same as the current release date
-                        // 1. and the need_import field is true, import is needed
-                        // 2. and the need_import field is false, import is not needed
-                        if (currentRel.compareTo(oldCurrentRel) === 0)
-                            needImport = gr.getValue("need_import");
-
-                        gr.setValue("title", title);
-                        gr.setValue("need_import", needImport);
-                        gr.setValue("initial_release_date", initRel);
-                        gr.setValue("last_modified_date", currentRel);
-                        gr.setValue("cvrf_url", CVRFUrl);
-                        gr.update();
-                    } else {
-                        gr = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration_update");
-                        gr.initialize();
+                        var gr = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration_update");
                         if (domain)
-                            gr.setValue("sys_domain", domain);
+                            gr.addQuery("sys_domain", domain);
                         else
-                            gr.setValue("sys_domain", "global");
-                        gr.setValue("id", id);
-                        gr.setValue("title", title);
-                        gr.setValue("need_import", true);
-                        gr.setValue("initial_release_date", initRel);
-                        gr.setValue("last_modified_date", currentRel);
-                        gr.setValue("cvrf_url", CVRFUrl);
-                        gr.insert();
+                            gr.addQuery("sys_domain", "global");
+                        gr.addQuery("id", id);
+                        gr.query();
+                        if (gr.next()) {
+                            var oldCurrentRel = gr.last_modified_date;
+                            oldCurrentRel = new GlideDateTime(oldCurrentRel);
+
+                            var needImport = true;
+                            // if the new release date is larger than the current release date
+                            // import is needed
+                            if (currentRel.compareTo(oldCurrentRel) > 0)
+                                needImport = true;
+                            // if the new release date is the same as the current release date
+                            // 1. and the need_import field is true, import is needed
+                            // 2. and the need_import field is false, import is not needed
+                            if (currentRel.compareTo(oldCurrentRel) === 0)
+                                needImport = gr.getValue("need_import");
+
+                            gr.setValue("title", title);
+                            gr.setValue("need_import", needImport);
+                            gr.setValue("initial_release_date", initRel);
+                            gr.setValue("last_modified_date", currentRel);
+                            gr.setValue("cvrf_url", CVRFUrl);
+                            gr.update();
+                        } else {
+                            gr = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration_update");
+                            gr.initialize();
+                            if (domain)
+                                gr.setValue("sys_domain", domain);
+                            else
+                                gr.setValue("sys_domain", "global");
+                            gr.setValue("id", id);
+                            gr.setValue("title", title);
+                            gr.setValue("need_import", true);
+                            gr.setValue("initial_release_date", initRel);
+                            gr.setValue("last_modified_date", currentRel);
+                            gr.setValue("cvrf_url", CVRFUrl);
+                            gr.insert();
+                        }
                     }
                 }
             }
@@ -229,13 +231,13 @@ CVRFUtil.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-16 07:36:04</sys_created_on>
         <sys_id>dee0073407427010568cffa08c1ed0e4</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>CVRFUtil</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_include_dee0073407427010568cffa08c1ed0e4</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-17 11:46:12</sys_updated_on>
+        <sys_updated_on>2021-08-18 07:08:46</sys_updated_on>
     </sys_script_include>
 </record_update>
