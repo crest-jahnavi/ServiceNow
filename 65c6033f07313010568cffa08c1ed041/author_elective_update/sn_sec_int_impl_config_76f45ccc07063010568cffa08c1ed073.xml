@@ -48,6 +48,7 @@
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-18 06:20:23</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_db_object display_value="" name="sn_sec_int_impl_config">sn_sec_int_impl_config</sys_db_object>
         <sys_id>6c9678313f894f7eb80c6c520e842fe1</sys_id>
         <sys_metadata>76f45ccc07063010568cffa08c1ed073</sys_metadata>
@@ -56,6 +57,7 @@
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_parent/>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_scope_delete display_value="">3e71da53962b400aacf1b36d1de0b224</sys_scope_delete>
         <sys_update_name>sn_sec_int_impl_config_76f45ccc07063010568cffa08c1ed073</sys_update_name>

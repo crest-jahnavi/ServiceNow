@@ -34,7 +34,7 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
 			var config = "";
 
 			config = (new sn_sec_int.Implementation()).getConfiguration(this.integrationGr.instance + "");
-			this.util._determineWhichToImport(config, this.domain);
+			//this.util._determineWhichToImport(config, this.domain);
 			/*var config="default";
 			var implGr = new GlideRecord("sn_sec_int_impl");
 			implGr.addQuery("sys_domain", this.domain);
@@ -47,7 +47,7 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
 				config = (new sn_sec_int.Implementation()).getConfiguration(implSysId);
 			}*/
 
-			this._determineRunParameters();
+			/*this._determineRunParameters();
 
 			if (!this.yearMonth) {
 				this.hasMoreData(false);
@@ -61,13 +61,13 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
 						'xml', '{}'
 					)
 				};
-			}
+			}*/
 
-			config.solution_endpoint = this.CVRFUrl;
+			//config.solution_endpoint = this.CVRFUrl;
 
 			gs.info(JSON.stringify(config));
 			var fileName = this.integrationGr.name + "_" + this.yearMonth + "_" + new GlideDateTime().toString() + ".xml";
-			var msg = this.util._buildRESTMessage(config);
+			var msg = this._buildRESTMessage(config);
 			msg.saveResponseBodyAsAttachment(this.integrationProcessGr.getTableName(), this.integrationProcessGr.sys_id + "", fileName, null);
 			gs.info(this.integrationProcessGr.getTableName() + " " + this.integrationProcessGr.sys_id + "");
 			var resp = msg.execute();
@@ -100,7 +100,7 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
 				contentType: "sys_attachment",
 				extension: "xml"
 			};
-			this._handlePagination();
+			//this._handlePagination();
 			return obj;
 
 		} catch (e) {
@@ -109,7 +109,7 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
 		}
 	},
 
-	_determineRunParameters: function () {
+	/*_determineRunParameters: function () {
 		var gr = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration_update");
 		gr.addQuery("need_import", true);
 		if (this.domain)
@@ -168,96 +168,15 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
 			grEndDate.value = new GlideDate().getDisplayValue();
 			grEndDate.update();
 		}
+	},*/
+
+	_buildRESTMessage: function (config) {
+		var restMsg = new sn_ws.RESTMessageV2("CVRF Solutions", "Retrieve Solutions");
+		
+		gs.info("URL called" + config.solution_endpoint);
+		restMsg.setStringParameter("base_url", config.solution_endpoint);
+		return restMsg;
 	},
-
-	// _buildRESTMessage: function (config) {
-	// 	var restMsg = new sn_ws.RESTMessageV2("CVRF Solutions", "Retrieve Solutions");
-	// 	if (config.authenticationType == "BASIC_AUTH") {
-	// 		restMsg.setBasicAuth(config.username, config.password);
-	// 	} else if (config.authenticationType == "OAUTH_2.0") {
-
-	// 		/*var outhProfile = new GlideRecord("oauth_entity");
-	// 		//outhProfile.initialize();
-	// 		outhProfile.get("4dc55ecd2f71f0101767d8ddf699b6fe");
-	// 		outhProfile.name = "profile " + config.name;
-	// 		outhProfile.sys_scope = "b0793e902fb130101767d8ddf699b6d4"; // property application scope
-
-	// 		outhProfile.client_id = config.client_id;
-	// 		outhProfile.client_secret = config.client_secret;
-	// 		outhProfile.active = true;
-	// 		outhProfile.auth_url = config.authorization_url;
-	// 		outhProfile.token_url = config.token_url;
-	// 		outhProfile.redirect_url = config.redirect_url;
-	// 		outhProfile.default_grant_type = "client_credentials";
-	// 		outhProfile.refresh_token_lifespan = "8640000";
-	// 		outhProfile.type = "oauth_provider";
-	// 		var profileSys_id = outhProfile.update();
-
-	// 		var outhProfileEntry = new GlideRecord("oauth_entity_profile");
-	// 		if (outhProfileEntry.get("c39d92892fb1f0101767d8ddf699b6f4")) {
-	// 			var outhProfile = new GlideRecord("oauth_entity");
-	// 			if (outhProfile.get(profileSys_id)) {
-	// 				outhProfileEntry.name = "Entity " + config.name;
-	// 				outhProfileEntry.sys_scope == "b0793e902fb130101767d8ddf699b6d4"; // property application scope
-	// 				outhProfileEntry.oauth_entity = profileSys_id;
-	// 				//outhProfileEntry.setValue("default",true);
-	// 				outhProfileEntry.grant_type = "client_credentials";
-	// 				var oauthProfile = outhProfileEntry.update();
-	// 			}
-
-	// 		}*/
-	// 		var gr = new GlideRecord("oauth_entity");
-	// 		gr.get(config.oauth_provider);
-	// 		var oauthName = gr.name;
-	// 		var gr = new GlideRecord("oauth_entity_profile");
-	// 		gr.get(config.oauth_profile);
-	// 		//gr.addQuery("oauth_entity", config.oauth_provider);
-	// 		gr.query();
-	// 		if (gr.next()) {
-
-	// 			var oAuthClient = new sn_auth.GlideOAuthClient();
-	// 			//var requestor_context = 'test';
-	// 			//var requestor_id = 'abc@xyz.com';
-	// 			var oauth_profile_id = gr.sys_id;//'c39d92892fb1f0101767d8ddf699b6f4'; // profile ID [sys_id of  'OAuth Entity Profiles' (oauth_entity_profile) record in OAUTH registry  record]
-
-	// 			var params = { grant_type: "client_credentials" };//, username: 'admin', password: 'pwd', oauth_requestor_context: requestor_context, oauth_requestor: requestor_id, oauth_provider_profile: oauth_profile_id }; //
-	// 			var json = new global.JSON();
-	// 			var text = json.encode(params);
-	// 			var tokenResponse = oAuthClient.requestToken(oauthName, text); //'oAuth Test' is the name of the OAuth application registry record (oauth_entity)
-	// 			//gs.info("tokenresponse" + JSON.stringify(tokenResponse));//"profile " + config.name
-	// 			var token = tokenResponse.getToken();
-	// 			var access_token = token.getAccessToken();
-
-	// 			gs.info("AccessToken:" + access_token);
-	// 			gs.info("AccessTokenExpiresIn:" + token.getExpiresIn());
-	// 			gs.info(" RefreshToken:" + token.getRefreshToken());
-	// 			restMsg.setRequestHeader("Authorization", "Bearer " + access_token);
-	// 			restMsg.setRequestHeader("Accept", "*/*");
-	// 		}
-	// 		/*var gr = new GlideRecord("oauth_entity_profile");
-	// 		gr.addQuery("oauth_entity", config.oauth_provider);
-	// 		gr.query();
-	// 		if (gr.next()) {
-	// 			var oauth_profile_id = gr.sys_id;
-	// 			var restMsg1 = new GlideRecord("sys_rest_message");
-	// 			if (restMsg1.get("453c09b42f7d70101767d8ddf699b694"))//  REST Message ID
-	// 			{
-	// 				restMsg1.oauth2_profile = oauth_profile_id;
-	// 				//restMsg.rest_endpoint = auth_url;
-	// 				restMsg1.update();
-	// 			}
-	// 			//gs.info("token=" + "Bearer " + access_token);
-	// 			//restMsg.setRequestHeader("Authorization", "Bearer " + access_token);
-
-	// 		}*/
-
-
-	// 	}
-
-	// 	gs.info("URL called" + config.solution_endpoint);
-	// 	restMsg.setStringParameter("base_url", config.solution_endpoint);
-	// 	return restMsg;
-	// },
 
 
 	type: 'CVRFSolutionIntegration'
@@ -265,14 +184,16 @@ CVRFSolutionIntegration.prototype = Object.extendsObject(sn_vul.VulnerabilityInt
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 05:56:35</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>662dcb7307713010568cffa08c1ed0be</sys_id>
-        <sys_mod_count>21</sys_mod_count>
+        <sys_mod_count>24</sys_mod_count>
         <sys_name>CVRFSolutionIntegration</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_include_662dcb7307713010568cffa08c1ed0be</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-18 04:31:48</sys_updated_on>
+        <sys_updated_on>2021-09-28 08:41:45</sys_updated_on>
     </sys_script_include>
 </record_update>

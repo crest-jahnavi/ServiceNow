@@ -29,102 +29,15 @@
         <role_conditions/>
         <script><![CDATA[(function executeRule(current, previous /*null when async*/ ) {
     try {
+		gs.info('BR Fired - ');
 
         if (current.type == "API_BASED") {
-            var auth_type, user_name, password, sol_url;
-            auth_type = current.authentication_type.trim();
+            var  sol_url;
+            //auth_type = current.authentication_type.trim();
             //auth_url = current.authentication_endpoint;
             sol_url = current.solution_endpoint;
 
-            if (auth_type == "BASIC_AUTH") {
-                //credential = current.basic_auth_credential_name;
-                user_name = current.user_name;
-                password = current.password.getDecryptedValue();
-
-                var authentication = new CVRFLogin();
-                var response = authentication.login(sol_url, user_name, password, auth_type);
-                if (response.authenticated == false) {
-                    gs.addErrorMessage(response.message);
-
-                    current.setValue("user_name", previous.basic_auth_credential_name.user_name);
-                    current.setValue("password", "");
-
-                    current.setValue("solution_endpoint", previous.solution_endpoint);
-                    current.setValue("authentication_type", previous.authentication_type);
-                    current.setValue("name", previous.name);
-                    current.setAbortAction(true);
-                } else {
-                    gs.addInfoMessage("SUCCESS");
-                }
-            } else if (auth_type == "OAUTH_2.0") {
-
-                /*var outhProfile = new GlideRecord("oauth_entity");
-                //outhProfile.initialize();
-                outhProfile.get("4dc55ecd2f71f0101767d8ddf699b6fe");
-                outhProfile.name = "profile " + current.name.getDisplayValue();
-                outhProfile.sys_scope = "b0793e902fb130101767d8ddf699b6d4"; // property application scope
-
-                outhProfile.client_id = current.client_id.getDisplayValue();
-                outhProfile.client_secret = current.client_secret_key.getDecryptedValue();
-                outhProfile.active = true;
-                outhProfile.auth_url = current.authorization_url.getDisplayValue();
-                outhProfile.token_url = current.token_url.getDisplayValue();
-                outhProfile.redirect_url = current.redirect_url.getDisplayValue();
-                outhProfile.default_grant_type = "client_credentials";
-                outhProfile.refresh_token_lifespan = "8640000";
-                outhProfile.type = "oauth_provider";
-                var profileSys_id = outhProfile.update();*/
-
-                /*var outhProfileEntry = new GlideRecord("oauth_entity_profile");//c39d92892fb1f0101767d8ddf699b6f4
-                outhProfileEntry.initialize();
-                outhProfileEntry.name = "Entity " + current.name.getDisplayValue();
-                outhProfileEntry.sys_scope == "b0793e902fb130101767d8ddf699b6d4"; // property application scope
-                outhProfileEntry.oauth_entity = profileSys_id;
-                //outhProfileEntry.setValue("default",true);
-                outhProfileEntry.grant_type = "client_credentials";
-                var entirySysID = outhProfileEntry.insert();
-                var oauthProfile = entirySysID;*/
-
-                /*var outhProfileEntry = new GlideRecord("oauth_entity_profile");
-                if (outhProfileEntry.get("c39d92892fb1f0101767d8ddf699b6f4")) {
-                	var outhProfile = new GlideRecord("oauth_entity");
-                	if (outhProfile.get(profileSys_id)) {
-                		outhProfileEntry.name = "Entity " + current.name.getDisplayValue();
-                		outhProfileEntry.sys_scope == "b0793e902fb130101767d8ddf699b6d4"; // property application scope
-                		outhProfileEntry.oauth_entity = profileSys_id;
-                		//outhProfileEntry.setValue("default",true);
-                		outhProfileEntry.grant_type = "client_credentials";
-                		var oauthProfile = outhProfileEntry.update();
-                	}
-
-                }*/
-
-                /*var restMsg = new GlideRecord("sys_rest_message");
-                if (restMsg.get("453c09b42f7d70101767d8ddf699b694"))//  REST Message ID
-                {
-                	restMsg.oauth2_profile = oauthProfile;
-                	//restMsg.rest_endpoint = auth_url;
-                	restMsg.update();
-                }*/
-
-                /*var restMethod = new GlideRecord("sys_rest_message_fn");
-                var defaultGet = "264dcd742f7d70101767d8ddf699b67c";
-                if (restMethod.get(defaultGet))//  REST Message ID
-                {
-                	restMethod.rest_endpoint = auth_url;
-                	restMethod.update();
-                }
-
-                var restMethod = new GlideRecord("sys_rest_message_fn");
-                var retrieve_Solutions = "3d0b6e0d2ff1f0101767d8ddf699b642";
-                if (restMethod.get(retrieve_Solutions))//  REST Message ID
-                {
-                	restMethod.rest_endpoint = sol_url;
-                	restMethod.update();
-                }*/
-
-
-            }
+            
             if (current.instance != "") {
                 var instance = new GlideRecord("sn_sec_int_impl");
                 instance.get(current.instance);
@@ -182,20 +95,20 @@
 
             var d = {
                 "11bc5bbf07713010568cffa08c1ed081": sol_url, // id of integration parameter: value from the form
-                "6ddbdf7f07713010568cffa08c1ed03d": auth_type,
+                //"6ddbdf7f07713010568cffa08c1ed03d": auth_type,
                 //"8fdcb2a62f3530101767d8ddf699b619": auth_url,
-                "100c1f7f07713010568cffa08c1ed07c": user_name,
-                "cf1cd3bf07713010568cffa08c1ed082": password,
+                //"100c1f7f07713010568cffa08c1ed07c": user_name,
+                //"cf1cd3bf07713010568cffa08c1ed082": password,
                 //"a5df199f2fb130101767d8ddf699b600": current.client_id,
                 "c5ac1bbf07713010568cffa08c1ed03d": current.name,
                 //"ddff199f2fb130101767d8ddf699b6b5": current.client_secret_key.getDecryptedValue(),
                 //"ca5021df2fb130101767d8ddf699b62d": current.redirect_url,
                 //"bc702d9f2fb130101767d8ddf699b6d0": current.token_url,
                 //"9440ad9f2fb130101767d8ddf699b6de": current.authorization_url,
-                "6b4c1b7f07713010568cffa08c1ed05d": current.oauth_provider,
-                "616c53bf07713010568cffa08c1ed0ad": current.oauth_profile,
-                "8d93ff090702b010568cffa08c1ed0e4": current.start_date,
-                "eea373490702b010568cffa08c1ed0eb": current.end_date
+               // "6b4c1b7f07713010568cffa08c1ed05d": current.oauth_provider,
+                //"616c53bf07713010568cffa08c1ed0ad": current.oauth_profile,
+                //"8d93ff090702b010568cffa08c1ed0e4": current.start_date,
+                //"eea373490702b010568cffa08c1ed0eb": current.end_date
             }
             var instanceParameters;
             for (var x in d) {
@@ -210,9 +123,9 @@
                 }
             }
         } else {
-            gs.info('add data in the import queue entry');
+//             gs.info('add data in the import queue entry');
 
-                    gs.info('inside else part of BR');
+//                     gs.info('inside else part of BR');
                     var ds = new GlideRecord("sys_data_source");
                     
                     
@@ -225,7 +138,7 @@
                     gr1.data_source = '3a4a973f07713010568cffa08c1ed0e6';
                     gr1.status = 'QUEUED';
                     var sysId = gr1.insert();
-                    gs.info('sys id of import queue entry : ' + sysId);
+//                     gs.info('sys id of import queue entry : ' + sysId);
 
 
                     var attachment = new GlideSysAttachment();
@@ -251,7 +164,7 @@
 
             // 		var mgr = new sn_vul.VulnerabilityDSAttachmentManager();
             // 		mgr.processQueue();
-            gs.info('Queue processed');
+//             gs.info('Queue processed');
         }
     } catch (e) {
         gs.info("Exception in BR : " + e);
@@ -262,18 +175,20 @@
         <sys_class_name>sys_script</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 05:53:18</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>d94c037307713010568cffa08c1ed0a8</sys_id>
-        <sys_mod_count>10</sys_mod_count>
+        <sys_mod_count>13</sys_mod_count>
         <sys_name>ValidateConfiguration</sys_name>
         <sys_overrides/>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_d94c037307713010568cffa08c1ed0a8</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-18 12:22:47</sys_updated_on>
+        <sys_updated_on>2021-09-30 11:37:26</sys_updated_on>
         <template/>
         <when>before</when>
     </sys_script>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="CVRF Configuration" max_length="40" name="x_440354_cvrf_inte_cvrf_configuration" sizeclass="5" type="collection">
-        <element choice="3" default="NO_AUTH" label="Authentication Type" mandatory="true" max_length="40" name="authentication_type" type="string">
+    <element label="CVRF Configuration" max_length="40" name="x_440354_cvrf_inte_cvrf_configuration" sizeclass="10" type="collection">
+        <element choice="3" default="NO_AUTH" label="Authentication Type" max_length="40" name="authentication_type" type="string">
             <choice>
                 <element inactive_on_update="false" label="OAuth 2.0" sequence="0" value="OAUTH_2.0"/>
                 <element inactive_on_update="false" label="Basic Auth" sequence="1" value="BASIC_AUTH"/>
@@ -13,7 +13,7 @@
         <element label="OAuth Profile" max_length="32" name="oauth_profile" reference="oauth_entity_profile" type="reference"/>
         <element label="OAuth Provider" max_length="32" name="oauth_provider" reference="oauth_entity" type="reference"/>
         <element label="Password" max_length="255" name="password" type="password2"/>
-        <element label="Solution Endpoint" mandatory="true" max_length="1024" name="solution_endpoint" type="url"/>
+        <element label="Solution Endpoint" max_length="1024" name="solution_endpoint" type="url"/>
         <element label="Start Date" max_length="40" name="start_date" type="glide_date"/>
         <element choice="3" default="API_BASED" label="Type" max_length="255" name="type" type="choice">
             <choice>
@@ -22,6 +22,7 @@
             </choice>
         </element>
         <element label="User name" max_length="40" name="user_name" type="string"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Vendor" max_length="255" name="vendor" type="string"/>
         <index name="index">
             <element name="instance"/>
         </index>

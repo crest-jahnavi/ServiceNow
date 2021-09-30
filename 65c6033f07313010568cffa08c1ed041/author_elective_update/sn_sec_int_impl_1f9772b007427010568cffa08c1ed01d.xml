@@ -45,10 +45,11 @@
         <update_guid_history>2b97fab0e04270108a091cb019d35187:1551069553</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="CISCO-OAUTH-2">e0d20da50742f010568cffa08c1ed00e</sys_audit_delete>
+        <sys_audit_delete display_value="">e0d20da50742f010568cffa08c1ed00e</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-18 06:20:19</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_db_object display_value="" name="sn_sec_int_impl">sn_sec_int_impl</sys_db_object>
         <sys_id>0112f5efb5a642729ab97b8491781559</sys_id>
         <sys_metadata>1f9772b007427010568cffa08c1ed01d</sys_metadata>
@@ -57,6 +58,7 @@
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_parent/>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_scope_delete display_value="">3e71da53962b400aacf1b36d1de0b224</sys_scope_delete>
         <sys_update_name>sn_sec_int_impl_1f9772b007427010568cffa08c1ed01d</sys_update_name>

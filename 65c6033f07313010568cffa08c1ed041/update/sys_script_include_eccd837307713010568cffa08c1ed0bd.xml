@@ -9,7 +9,7 @@
         <name>CVRFSolutionProcessor</name>
         <script><![CDATA[var CVRFSolutionProcessor = Class.create();
 CVRFSolutionProcessor.prototype = {
-    initialize: function (domain, source, processId) {
+    initialize: function (domain, source, processId, integration) {
         this.processId = processId;
         this.inserted = 0;
         this.updated = 0;
@@ -19,8 +19,10 @@ CVRFSolutionProcessor.prototype = {
         this.productCategoryLib = {};
         this.domain = domain;
         this.SOURCE = source;
+		this.integration = integration;
         this.SOFTWARE_TABLE = "sn_vul_software";
         this.PRODUCT_CATEGORY_TABLE = "sn_vul_product_category";
+		this.integration_table = "x_440354_cvrf_inte_cvrf_solution_integration";
     },
 
     process: function (attachmentGr) {
@@ -56,35 +58,51 @@ CVRFSolutionProcessor.prototype = {
     },
 
     _handleCvrfdoc: function (node, version) {
-        var cvrfData = {};
+        var cvrfData = {"id":""};
         cvrfData["cves"] = [];
         var cni = node.getChildNodeIterator();
+		var tags = {
+			"DocumentTitle": 0,
+			"DocumentTracking": 0,
+			"Vulnerability": 0,
+			"DocumentNotes": 0,
+			"DocumentReferences": 0,
+			"ProductTree": 0
+		};
         while (cni.hasNext()) {
             var cn = cni.next();
             var nodeName = cn.getNodeName();
             gs.info("Node name : " + nodeName + " Node value : " + cn.getTextContent());
             var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
             if (nodeName == "DocumentTitle" || nodeName == "cvrf:DocumentTitle") {
+				tags["DocumentTitle"]=1;
                 cvrfData["DocumentTitle"] = textContent;
                 continue;
             }
+			
             if (nodeName == "DocumentTracking" || nodeName == "cvrf:DocumentTracking") {
+				tags["DocumentTracking"] = 1;
                 this._handleDocumentTracking(cvrfData, cn);
                 continue;
             }
             if (nodeName == "Vulnerability") {
+				tags["Vulnerability"] = 1;
                 this._handleVulnerability(cvrfData, cn);
                 continue;
             }
+				
             if (nodeName == "DocumentNotes" || nodeName == "cvrf:DocumentNotes") {
+				tags["DocumentNotes"] = 1;
                 this._handleDocumentNotes(cvrfData, cn);
                 continue;
             }
             if (nodeName == "ProductTree") {
+				tags["ProductTree"] = 1;
                 this._handleProductTree(cvrfData, cn, version);
                 continue;
             }
             if (nodeName == "DocumentReferences" || nodeName == "cvrf:DocumentReferences") {
+				tags["DocumentReferences"] = 1;
                 this._handleDocumentReferences(cvrfData, cn);
                 continue;
             }
@@ -99,6 +117,19 @@ CVRFSolutionProcessor.prototype = {
                 continue;
             cvrfData[nodeName] = textContent + "";
         }
+		if (!cvrfData["id"]){
+			gs.warn("Document ID is not available in file");
+		}
+			
+		for (var x in tags){
+			if (tags[x]  == 0){
+				gs.warn("Details for "+ x + " is not present in file");
+			}
+		
+		}
+		
+		
+		
         gs.info("CVRFdata : " + JSON.stringify(cvrfData));
         this._populateTables(cvrfData);
     },
@@ -162,6 +193,16 @@ CVRFSolutionProcessor.prototype = {
                 cvrfData["last_modified"] = this._convertToSNFriendlyTime(textContent);
                 continue;
             }
+			if ((nodeName == "Status" || nodeName == "cvrf:Status") && this.SOURCE == "CVRF"){
+				if (textContent == "Final"){
+					var gr = new GlideRecord(this.integration_table);
+					if (gr.get(this.integration)){
+						gr.run_type = "on_demand";
+						gr.update();
+						gs.info("updated record on demand");
+					}
+				}
+			}
         }
     },
 
@@ -237,53 +278,10 @@ CVRFSolutionProcessor.prototype = {
             gs.info("handle producttree function called");
             var productMap = {};
             var cni = node.getChildNodeIterator();
-            if (version == 1.1) {
-                while (cni.hasNext()) {// first Branch node typr vendor
-                    var cn1 = cni.next();
-                    if (cn1.getNodeName() == "Branch" && cn1.getAttribute("Type") == "Vendor") {
-                        var child2 = cn1.getChildNodeIterator();
-                        while (child2.hasNext()) {//iterate Product Family
-                            var cn = child2.next();
-                            var familyName = cn.getAttribute("Name");
-                            if (cn.getNodeName() == "Branch" && cn.getAttribute("Type") == "Product Family") {
-                                var child1 = cn.getChildNodeIterator();
-                                while (child1.hasNext()) {// iterate product name
-                                    var nextNode = child1.next();
-                                    if (nextNode.getNodeName() == "Branch" && nextNode.getAttribute("Type") == "Product Name") {
-                                        this._fetchSoftwareInfo(nextNode, productMap, familyName);
-                                    }
-                                }
-                                //break;
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                while (cni.hasNext()) {// first Branch node typr vendor
-                    var n1 = cni.next();
-                    gs.info("N1 node : " + n1.getNodeName());
-                    if (n1.getNodeName() == "Branch" /*&& n1.getAttribute("Type") == "Vendor"*/) {
-                        var n2 = n1.getChildNodeIterator();
-                        while (n2.hasNext()) {
-                            var n3 = n2.next();
-                            if (n3.getNodeName() == "Branch" && n3.getAttribute("Type") == "Product Name") {
-                                gs.info("N3 node : " + n3.getNodeName());
-                                var n4 = n3.getChildNodeIterator();
-                                while (n4.hasNext()) {
-                                    var n5 = n4.next();
-                                    gs.info("N5 node : " + n5);
-                                    if (n5.getNodeName() == "FullProductName" && !gs.nil(n5.getTextContent())) {
-                                        var pMap = {};
-                                        var productName = n5.getTextContent();
-                                        pMap["productName"] = productName;
-                                        pMap["value"] = n5.getTextContent();
-                                        productMap[n5.getAttribute("ProductID")] = pMap;
-                                    }
-                                }
-                            }
-                        }
-                    }
+            while (cni.hasNext()) {// first Branch node typr vendor
+                var cn1 = cni.next();
+                if (cn1.getNodeName() == "Branch" || cn1.getNodeName() == "FullProductName") {
+                    this._handleBranches(cn1, {}, productMap);
                 }
             }
             gs.info("Productmap : " + JSON.stringify(productMap));
@@ -294,6 +292,27 @@ CVRFSolutionProcessor.prototype = {
         }
     },
 
+    _handleBranches: function (node, dict, productMap) {
+        gs.info('handlebranches called' + node.getNodeName());
+        if (node.getNodeName() == "Branch"){
+            gs.info("inside if block");
+            if (["Product Name", "Product Family", "Product Version"].indexOf(node.getAttribute("Type"))){
+                dict[node.getAttribute("Type")] = node.getAttribute("Name");
+            }
+            var cni = node.getChildNodeIterator();
+            while (cni.hasNext()) {
+                var n1 = cni.next();
+                if (n1.getNodeName() == "Branch" /*&& n1.getAttribute("Type") == "Vendor"*/) {
+                    this._handleBranches(n1, dict, productMap);
+                }
+                else if( n1.getNodeName() == "FullProductName" && !gs.nil(n1.getTextContent())) {
+                    gs.info('inside else if block');
+                    dict["value"] = n1.getTextContent();
+                    productMap[n1.getAttribute("ProductID")] = dict;
+                } 
+            }            
+        } 
+    },
     _populateTables: function (cvrfData) {
         var solutionSysId;
         var newProductSysIds;
@@ -364,7 +383,7 @@ CVRFSolutionProcessor.prototype = {
     _handleProductCategory: function (product) {
         var prodSysId;
         var gr;
-        var pId = product["familyName"];
+        var pId = product["Product Family"];
         if (!gs.nil(pId)) {
             gr = new GlideRecord(this.PRODUCT_CATEGORY_TABLE);
             gr.addQuery("category", pId);
@@ -508,21 +527,23 @@ CVRFSolutionProcessor.prototype = {
     _handleProduct: function (product, pId) {
         var prodSysId;
         var gr;
-
+        gs.info("Product is : " + JSON.stringify(product));
         gr = new GlideRecord(this.SOFTWARE_TABLE);
         gr.addQuery("raw_product", pId);
         gr.query();
         if (gr.next()) {
             gr.setValue("raw_product", pId);
             gr.setValue("display_name", pId);
-            gr.setValue("version", product["version"])
+            if(!gs.nil(product["Product Version"]))
+                gr.setValue("version", product["Product Version"]);
             gr.update();
             prodSysId = gr.getUniqueValue();
         } else {
             gr.initialize();
             gr.setValue("raw_product", pId);
             gr.setValue("display_name", pId);//product["productName"]);
-            gr.setValue("version", product["version"])
+            if(!gs.nil(product["Product Version"]))
+                gr.setValue("version", product["Product Version"] + '');
             prodSysId = gr.insert();
         }
 
@@ -544,7 +565,7 @@ CVRFSolutionProcessor.prototype = {
                         var nextNode = child1.next();
                         if (nextNode.getNodeName() == "FullProductName" && !gs.nil(nextNode.getTextContent())) {
                             var pMap = {};
-                            pMap["familyName"] = familyName;
+                            pMap["familName"] = familyName;
                             pMap["productName"] = productName;
                             pMap["version"] = version;
                             pMap["value"] = nextNode.getTextContent();
@@ -625,14 +646,16 @@ CVRFSolutionProcessor.prototype = {
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 05:58:39</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>eccd837307713010568cffa08c1ed0bd</sys_id>
-        <sys_mod_count>47</sys_mod_count>
+        <sys_mod_count>64</sys_mod_count>
         <sys_name>CVRFSolutionProcessor</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_include_eccd837307713010568cffa08c1ed0bd</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-17 11:55:47</sys_updated_on>
+        <sys_updated_on>2021-09-30 11:15:35</sys_updated_on>
     </sys_script_include>
 </record_update>

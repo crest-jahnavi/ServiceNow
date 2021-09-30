@@ -33,7 +33,7 @@
         <function_definition/>
         <function_field>false</function_field>
         <internal_type display_value="URL">url</internal_type>
-        <mandatory>true</mandatory>
+        <mandatory>false</mandatory>
         <max_length>1024</max_length>
         <name>x_440354_cvrf_inte_cvrf_configuration</name>
         <next_element/>
@@ -53,15 +53,17 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 05:33:16</sys_created_on>
-        <sys_id>c8870b3f07313010568cffa08c1ed000</sys_id>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>177be6b41b0af8908f4aedb8b04bcb40</sys_id>
         <sys_mod_count>1</sys_mod_count>
         <sys_name>Solution Endpoint</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_dictionary_x_440354_cvrf_inte_cvrf_configuration_solution_endpoint</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-08-13 05:48:08</sys_updated_on>
+        <sys_updated_on>2021-09-28 07:50:09</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>

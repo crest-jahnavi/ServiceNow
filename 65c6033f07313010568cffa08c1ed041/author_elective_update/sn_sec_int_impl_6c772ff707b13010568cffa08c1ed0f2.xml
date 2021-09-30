@@ -45,10 +45,11 @@
         <update_guid_history>20776ff7beb13010d5046ff658c6c810:522098897</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="CISCO - XML">50dc633f07b13010568cffa08c1ed0ba</sys_audit_delete>
+        <sys_audit_delete display_value="">50dc633f07b13010568cffa08c1ed0ba</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-13 08:13:41</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_db_object display_value="" name="sn_sec_int_impl">sn_sec_int_impl</sys_db_object>
         <sys_id>084fdb4e1caf4679b13fa129607c27c9</sys_id>
         <sys_metadata>6c772ff707b13010568cffa08c1ed0f2</sys_metadata>
@@ -57,6 +58,7 @@
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_parent/>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_scope_delete display_value="">3e71da53962b400aacf1b36d1de0b224</sys_scope_delete>
         <sys_update_name>sn_sec_int_impl_6c772ff707b13010568cffa08c1ed0f2</sys_update_name>
