@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element extends="sn_vul_integration" label="CVRF Solution Integration" max_length="40" name="x_440354_cvrf_inte_cvrf_solution_integration" sizeclass="8" type="collection">
+    <element extends="sn_vul_integration" label="CVRF Solution Integration" max_length="40" name="x_440354_cvrf_inte_cvrf_solution_integration" sizeclass="4" type="collection">
         <element label="REST message" max_length="32" name="rest_message" reference="sys_rest_message" type="reference"/>
         <element label="REST method" max_length="32" name="rest_method" reference="sys_rest_message_fn" type="reference"/>
+        <element label="vendor" max_length="40" name="vendor" type="string"/>
         <index name="index">
             <element name="rest_message"/>
         </index>

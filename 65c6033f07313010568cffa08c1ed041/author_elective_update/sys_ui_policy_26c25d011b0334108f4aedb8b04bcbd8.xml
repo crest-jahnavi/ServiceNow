@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_policy">
+    <sys_ui_policy action="DELETE">
+        <active>true</active>
+        <conditions table="x_440354_cvrf_inte_cvrf_configuration">run=monthly^EQ<item display_value="Monthly" endquery="false" field="run" goto="false" newquery="false" operator="=" or="false" value="monthly"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </conditions>
+        <description/>
+        <global>true</global>
+        <inherit>false</inherit>
+        <isolate_script>true</isolate_script>
+        <model_id/>
+        <model_table/>
+        <on_load>true</on_load>
+        <order>200</order>
+        <reverse_if_false>true</reverse_if_false>
+        <run_scripts>false</run_scripts>
+        <script_false><![CDATA[function onCondition() {
+
+}]]></script_false>
+        <script_true><![CDATA[function onCondition() {
+
+}]]></script_true>
+        <set_values/>
+        <short_description>Display monthly</short_description>
+        <sys_class_name>sys_ui_policy</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 11:16:48</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>26c25d011b0334108f4aedb8b04bcbd8</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Display monthly</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_update_name>sys_ui_policy_26c25d011b0334108f4aedb8b04bcbd8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 11:25:51</sys_updated_on>
+        <table>x_440354_cvrf_inte_cvrf_configuration</table>
+        <ui_type>0</ui_type>
+        <view/>
+    </sys_ui_policy>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</application>
+        <file_path/>
+        <instance_id>42e0ea90db910fc04065f0e5bf9619af</instance_id>
+        <instance_name>ven02207</instance_name>
+        <name>sys_ui_policy_26c25d011b0334108f4aedb8b04bcbd8</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="sys_ui_policy"&gt;&lt;sys_ui_policy action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;conditions table="x_440354_cvrf_inte_cvrf_configuration"&gt;run=monthly^EQ&lt;item display_value="Monthly" endquery="false" field="run" goto="false" newquery="false" operator="=" or="false" value="monthly"/&gt;&lt;item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/&gt;&lt;/conditions&gt;&lt;description/&gt;&lt;global&gt;true&lt;/global&gt;&lt;inherit&gt;false&lt;/inherit&gt;&lt;isolate_script&gt;true&lt;/isolate_script&gt;&lt;model_id/&gt;&lt;model_table/&gt;&lt;on_load&gt;true&lt;/on_load&gt;&lt;order&gt;200&lt;/order&gt;&lt;reverse_if_false&gt;true&lt;/reverse_if_false&gt;&lt;run_scripts&gt;false&lt;/run_scripts&gt;&lt;script_false&gt;&lt;![CDATA[function onCondition() {
+
+}]]&gt;&lt;/script_false&gt;&lt;script_true&gt;&lt;![CDATA[function onCondition() {
+
+}]]&gt;&lt;/script_true&gt;&lt;set_values/&gt;&lt;short_description&gt;Display monthly&lt;/short_description&gt;&lt;sys_class_name&gt;sys_ui_policy&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2021-10-05 11:16:48&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;false&lt;/sys_customer_update&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;26c25d011b0334108f4aedb8b04bcbd8&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Display monthly&lt;/sys_name&gt;&lt;sys_overrides/&gt;&lt;sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte"&gt;65c6033f07313010568cffa08c1ed041&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="CVRF Integration for Security Operations"&gt;65c6033f07313010568cffa08c1ed041&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_policy_26c25d011b0334108f4aedb8b04bcbd8&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2021-10-05 11:25:51&lt;/sys_updated_on&gt;&lt;table&gt;x_440354_cvrf_inte_cvrf_configuration&lt;/table&gt;&lt;ui_type&gt;0&lt;/ui_type&gt;&lt;view/&gt;&lt;/sys_ui_policy&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1702358768</payload_hash>
+        <record_name>Display monthly</record_name>
+        <reverted_from/>
+        <source>f80f6b1b1b763c1c8f4aedb8b04bcbe4</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 11:25:51</sys_created_on>
+        <sys_id>981519c11b0334108f4aedb8b04bcb51</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>17c5033e8aa0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 11:25:51</sys_updated_on>
+        <type>UI Policy</type>
+        <update_guid>101519c139033410f93774252d3e3851</update_guid>
+        <update_guid_history>101519c139033410f93774252d3e3851:-1702358768,73f2d901ce033410e5b3d63091d33cf8:492883468</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 11:27:43</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_db_object display_value="" name="sys_ui_policy">sys_ui_policy</sys_db_object>
+        <sys_id>00d8ce16e29844f788b8facf6dec2f09</sys_id>
+        <sys_metadata>26c25d011b0334108f4aedb8b04bcbd8</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Display monthly</sys_name>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_parent display_value="CVRF Configuration">8b7be6b41b0af8908f4aedb8b04bcb30</sys_parent>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_scope_delete display_value="">3e71da53962b400aacf1b36d1de0b224</sys_scope_delete>
+        <sys_update_name>sys_ui_policy_26c25d011b0334108f4aedb8b04bcbd8</sys_update_name>
+        <sys_update_version display_value="sys_ui_policy_26c25d011b0334108f4aedb8b04bcbd8">981519c11b0334108f4aedb8b04bcb51</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 11:27:43</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

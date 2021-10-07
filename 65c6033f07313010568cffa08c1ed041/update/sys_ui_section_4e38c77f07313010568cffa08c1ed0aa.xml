@@ -4,13 +4,13 @@
             <element>type</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2021-09-28 07:40:10</sys_created_on>
-            <sys_id>7d4e18fa1b7afcd88f4aedb8b04bcb04</sys_id>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>17b3655d1bc374108f4aedb8b04bcb19</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2021-09-28 07:40:10</sys_updated_on>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -18,13 +18,13 @@
             <element>name</element>
             <position>1</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2021-09-28 07:40:10</sys_created_on>
-            <sys_id>3d4e18fa1b7afcd88f4aedb8b04bcb05</sys_id>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>97b3655d1bc374108f4aedb8b04bcb26</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2021-09-28 07:40:10</sys_updated_on>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -32,13 +32,13 @@
             <element>solution_endpoint</element>
             <position>2</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2021-09-28 07:40:10</sys_created_on>
-            <sys_id>b14e18fa1b7afcd88f4aedb8b04bcb06</sys_id>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>1bb3655d1bc374108f4aedb8b04bcb26</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2021-09-28 07:40:10</sys_updated_on>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -46,13 +46,111 @@
             <element>vendor</element>
             <position>3</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2021-09-30 10:49:14</sys_created_on>
-            <sys_id>7abc9fd31bb23c1c8f4aedb8b04bcb07</sys_id>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>9bb3655d1bc374108f4aedb8b04bcb26</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2021-09-30 10:49:14</sys_updated_on>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>run</element>
+            <position>4</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>1fb3655d1bc374108f4aedb8b04bcb26</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>run_dayofmonth</element>
+            <position>5</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>9fb3655d1bc374108f4aedb8b04bcb26</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>run_dayofweek</element>
+            <position>6</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>13b3655d1bc374108f4aedb8b04bcb27</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>run_period</element>
+            <position>7</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>93b3655d1bc374108f4aedb8b04bcb27</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>run_start</element>
+            <position>8</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>17b3655d1bc374108f4aedb8b04bcb27</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>time</element>
+            <position>9</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>97b3655d1bc374108f4aedb8b04bcb27</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>schedular</element>
+            <position>10</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-06 07:08:27</sys_created_on>
+            <sys_id>1bb3655d1bc374108f4aedb8b04bcb27</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_440354_cvrf_inte_cvrf_configuration" sys_domain="global" view="Default view">4e38c77f07313010568cffa08c1ed0aa</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 07:08:27</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>

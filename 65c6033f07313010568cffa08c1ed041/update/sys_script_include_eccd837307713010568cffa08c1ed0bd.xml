@@ -58,51 +58,53 @@ CVRFSolutionProcessor.prototype = {
     },
 
     _handleCvrfdoc: function (node, version) {
-        var cvrfData = {"id":""};
+        var cvrfData = {};
         cvrfData["cves"] = [];
         var cni = node.getChildNodeIterator();
 		var tags = {
-			"DocumentTitle": 0,
-			"DocumentTracking": 0,
-			"Vulnerability": 0,
-			"DocumentNotes": 0,
-			"DocumentReferences": 0,
-			"ProductTree": 0
+			"DocumentTitle": "DocumentTitle",
+			"CurrentReleaseDate": "last_modified",
+            "InitialReleaseDate":"date_published",
+            "Identification": "id",
+			"CVE": "cves",
+            "Note or Description": "description",
+            "URL or DocumentReferences": "url",
+			"ProductTree": "productMap"
 		};
         while (cni.hasNext()) {
             var cn = cni.next();
             var nodeName = cn.getNodeName();
-            gs.info("Node name : " + nodeName + " Node value : " + cn.getTextContent());
+            //gs.info("Node name : " + nodeName + " Node value : " + cn.getTextContent());
             var textContent = gs.nil(cn.getTextContent()) ? "" : cn.getTextContent();
             if (nodeName == "DocumentTitle" || nodeName == "cvrf:DocumentTitle") {
-				tags["DocumentTitle"]=1;
+				//tags["DocumentTitle"]=1;
                 cvrfData["DocumentTitle"] = textContent;
                 continue;
             }
 			
             if (nodeName == "DocumentTracking" || nodeName == "cvrf:DocumentTracking") {
-				tags["DocumentTracking"] = 1;
+				//tags["DocumentTracking"] = 1;
                 this._handleDocumentTracking(cvrfData, cn);
                 continue;
             }
             if (nodeName == "Vulnerability") {
-				tags["Vulnerability"] = 1;
+				//tags["Vulnerability"] = 1;
                 this._handleVulnerability(cvrfData, cn);
                 continue;
             }
 				
             if (nodeName == "DocumentNotes" || nodeName == "cvrf:DocumentNotes") {
-				tags["DocumentNotes"] = 1;
+				//tags["DocumentNotes"] = 1;
                 this._handleDocumentNotes(cvrfData, cn);
                 continue;
             }
             if (nodeName == "ProductTree") {
-				tags["ProductTree"] = 1;
+				//tags["ProductTree"] = 1;
                 this._handleProductTree(cvrfData, cn, version);
                 continue;
             }
             if (nodeName == "DocumentReferences" || nodeName == "cvrf:DocumentReferences") {
-				tags["DocumentReferences"] = 1;
+				//tags["DocumentReferences"] = 1;
                 this._handleDocumentReferences(cvrfData, cn);
                 continue;
             }
@@ -117,7 +119,7 @@ CVRFSolutionProcessor.prototype = {
                 continue;
             cvrfData[nodeName] = textContent + "";
         }
-		if (!cvrfData["id"]){
+		/*if (!cvrfData["id"]){
 			gs.warn("Document ID is not available in file");
 		}
 			
@@ -126,11 +128,17 @@ CVRFSolutionProcessor.prototype = {
 				gs.warn("Details for "+ x + " is not present in file");
 			}
 		
+		}*/
+        var id = cvrfData["id"] ;
+		gs.info("CVRFdata : " + JSON.stringify(cvrfData));
+		for (var x in tags){
+			if ((!(tags[x]  in cvrfData)) || cvrfData[tags[x]].length == 0){
+				gs.warn("Details for "+ x + " is not present in CVRF data with source id "+ id);
+			}
+		
 		}
 		
-		
-		
-        gs.info("CVRFdata : " + JSON.stringify(cvrfData));
+        
         this._populateTables(cvrfData);
     },
 
@@ -164,18 +172,25 @@ CVRFSolutionProcessor.prototype = {
         while (cni.hasNext()) {
             var cn = cni.next();
             if (cn.getNodeName() == "Note" && cn.getAttribute("Type") == "Summary" && !gs.nil(cn.getTextContent())) {
-                cvrfData["description"] = "<h4>" + "Topic" + "</h4>" + cn.getTextContent().trim();
-            } else if (cn.getNodeName() == "Note" && cn.getAttribute("Type") == "General" && !gs.nil(cn.getTextContent())) {
+                if (cvrfData["description"])
+                    cvrfData["description"] += "<h4>" + "Topic" + "</h4>" + cn.getTextContent().trim();
+                else
+                    cvrfData["description"] = "<h4>" + "Topic" + "</h4>" + cn.getTextContent().trim(); 
+            } else if (cn.getNodeName() == "Note" && !gs.nil(cn.getTextContent())){
                 if (cvrfData["description"])
                     cvrfData["description"] += "<br/><br/>" + "<h4>" + "Details" + "</h4>" + cn.getTextContent().trim();
                 else
                     cvrfData["description"] = "<h4>" + "Details" + "</h4>" + cn.getTextContent().trim();
-                break;
             }
         }
     },
 
     _handleDocumentTracking: function (cvrfData, node) {
+		/*var tags = {
+			"InitialReleaseDate":0,
+			"CurrentReleaseDate":0,
+			"Status":0
+		};*/
         var cni = node.getChildNodeIterator();
         while (cni.hasNext()) {
             var cn = cni.next();
@@ -186,17 +201,23 @@ CVRFSolutionProcessor.prototype = {
                 continue;
             }
             if (nodeName == "InitialReleaseDate" || nodeName == "cvrf:InitialReleaseDate") {
+				//tags["InitialReleaseDate"] = 1;
                 cvrfData["date_published"] = this._convertToSNFriendlyTime(textContent);
                 continue;
             }
             if (nodeName == "CurrentReleaseDate" || nodeName == "cvrf:CurrentReleaseDate") {
+				//tags["CurrentReleaseDate"] = 1;
                 cvrfData["last_modified"] = this._convertToSNFriendlyTime(textContent);
                 continue;
             }
-			if ((nodeName == "Status" || nodeName == "cvrf:Status") && this.SOURCE == "CVRF"){
+			if ((nodeName == "Status" || nodeName == "cvrf:Status")){
+				//tags["Status"] = 1;
 				if (textContent == "Final"){
 					var gr = new GlideRecord(this.integration_table);
-					if (gr.get(this.integration)){
+					gr.addQuery('integration', '2bc813fb07713010568cffa08c1ed0e5');
+					gr.addQuery('sys_id', this.integration);
+					gr.query();
+					if (gr.next()){
 						gr.run_type = "on_demand";
 						gr.update();
 						gs.info("updated record on demand");
@@ -204,6 +225,12 @@ CVRFSolutionProcessor.prototype = {
 				}
 			}
         }
+		/*for (var x in tags){
+			if (tags[x]  == 0){
+				gs.warn("Details for "+ x + " is not present in file");
+			}
+		
+		}*/
     },
 
     _handleIdentification: function (rhsa, node) {
@@ -648,7 +675,7 @@ CVRFSolutionProcessor.prototype = {
         <sys_created_on>2021-08-13 05:58:39</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>eccd837307713010568cffa08c1ed0bd</sys_id>
-        <sys_mod_count>64</sys_mod_count>
+        <sys_mod_count>76</sys_mod_count>
         <sys_name>CVRFSolutionProcessor</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy>read</sys_policy>
@@ -656,6 +683,6 @@ CVRFSolutionProcessor.prototype = {
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_include_eccd837307713010568cffa08c1ed0bd</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-09-30 11:15:35</sys_updated_on>
+        <sys_updated_on>2021-10-05 11:54:57</sys_updated_on>
     </sys_script_include>
 </record_update>

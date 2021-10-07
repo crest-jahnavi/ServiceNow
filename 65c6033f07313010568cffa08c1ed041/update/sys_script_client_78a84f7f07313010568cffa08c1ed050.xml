@@ -15,35 +15,82 @@
 	
 	var Type = g_form.getValue('type');
 	var authFields = {
-		"API_BASED": [
-			"solution_endpoint"
+		"API_BASED_MANDATORY": [
+			"solution_endpoint",
 		],
-		"FILE_UPLOAD": [
-			"solution_endpoint"
+		"API_BASED":
+		[
+			"run",
+			"time",
+			"run_dayofweek",
+			"run_dayofmonth",
+			"run_period",
+			"run_start"
 		]
+	};
+		var timeFields = {
+		"daily": [
+			"time"
+		],
+		"weekly": [
+			"time",
+			"run_dayofweek"
+		],
+		"monthly":[
+			"run_dayofmonth",
+			"time"
+		],
+		"periodically":[
+			"run_start",
+			"run_period"
+		],
+		"once":[
+			"run_start"
+		],
+		"on_demand":[]
 	};
 	var actionOnFields = {
 		hide: [],
-		show: []
+		show: [],
+		hideMandatory:[],
+		showMandatory:[]
 	};
 	if (Type == "API_BASED"){
-	
-		actionOnFields.show = authFields["API_BASED"];
+		//actionOnFields.show = authFields["API_BASED"];
+		actionOnFields.showMandatory = authFields["API_BASED_MANDATORY"];
+		var run = g_form.getValue("run");
+		for (var field in timeFields) {
+		if (field == run){
+			actionOnFields.show = ["run"];
+			actionOnFields.show = actionOnFields.show.concat(timeFields[field]);
+		}
+		else
+			actionOnFields.hide = actionOnFields.hide.concat(timeFields[field]);
+	}
 	
 	}else{
-		actionOnFields.hide = authFields["FILE_UPLOAD"]
+		actionOnFields.hide = authFields["API_BASED"];
+		actionOnFields.hideMandatory = authFields["API_BASED_MANDATORY"];
 		
 	}
 
 
 
-	actionOnFields.hide.forEach(function (field) {
+	actionOnFields.hideMandatory.forEach(function (field) {
 		g_form.setMandatory(field, false);
 		g_form.setDisplay(field, false);
 	});
 
-	actionOnFields.show.forEach(function (field) {
+	actionOnFields.showMandatory.forEach(function (field) {
 		g_form.setMandatory(field, true);
+		g_form.setDisplay(field, true);
+	});
+	
+	actionOnFields.hide.forEach(function (field) {
+		g_form.setDisplay(field, false);
+	});
+
+	actionOnFields.show.forEach(function (field) {
 		g_form.setDisplay(field, true);
 	});
 
@@ -66,7 +113,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>78a84f7f07313010568cffa08c1ed050</sys_id>
-        <sys_mod_count>6</sys_mod_count>
+        <sys_mod_count>14</sys_mod_count>
         <sys_name>Display integration fields</sys_name>
         <sys_overrides/>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
@@ -75,7 +122,7 @@
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_script_client_78a84f7f07313010568cffa08c1ed050</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-09-30 05:38:21</sys_updated_on>
+        <sys_updated_on>2021-10-05 11:28:01</sys_updated_on>
         <table>x_440354_cvrf_inte_cvrf_configuration</table>
         <type>onLoad</type>
         <ui_type>0</ui_type>

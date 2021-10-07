@@ -23,40 +23,40 @@
             <element>type</element>
             <hint/>
             <inactive>false</inactive>
-            <label>API Based</label>
+            <label>File Import</label>
             <language>en</language>
             <name>x_440354_cvrf_inte_cvrf_configuration</name>
             <sequence>0</sequence>
-            <synonyms/>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2021-08-18 12:03:06</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>533156a50746f010568cffa08c1ed087</sys_id>
-            <sys_mod_count>5</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2021-08-19 05:41:20</sys_updated_on>
-            <value>API_BASED</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>type</element>
-            <hint/>
-            <inactive>false</inactive>
-            <label>File Upload</label>
-            <language>en</language>
-            <name>x_440354_cvrf_inte_cvrf_configuration</name>
-            <sequence>1</sequence>
             <synonyms/>
             <sys_created_by>admin</sys_created_by>
             <sys_created_on>2021-08-18 12:02:52</sys_created_on>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>ae11da690746f010568cffa08c1ed035</sys_id>
-            <sys_mod_count>5</sys_mod_count>
+            <sys_mod_count>7</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2021-08-19 05:41:20</sys_updated_on>
+            <sys_updated_on>2021-10-06 11:46:10</sys_updated_on>
             <value>FILE_UPLOAD</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>CVRF URL</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>1</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-08-18 12:03:06</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>533156a50746f010568cffa08c1ed087</sys_id>
+            <sys_mod_count>8</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-06 11:46:10</sys_updated_on>
+            <value>API_BASED</value>
         </sys_choice>
     </sys_choice>
 </record_update>

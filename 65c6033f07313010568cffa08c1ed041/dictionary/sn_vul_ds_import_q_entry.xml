@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="exclude_from_antivirus_scan=true" label="Entrée de file d’attente d’importation de la sourc" max_length="40" name="sn_vul_ds_import_q_entry" sizeclass="6" type="collection">
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="CVRF Configuration" max_length="32" name="x_440354_cvrf_inte_cvrf_configuration" reference="x_440354_cvrf_inte_cvrf_configuration" type="reference"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Vendor Name" max_length="255" name="x_440354_cvrf_inte_vendor_name" type="string"/>
+    </element>
+</database>

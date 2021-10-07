@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="run" table="x_440354_cvrf_inte_cvrf_configuration" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>run</element>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>4aeb1c411b8bf0108f4aedb8b04bcb87</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>run</sys_name>
+            <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+            <sys_update_name>sys_choice_x_440354_cvrf_inte_cvrf_configuration_run</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 07:16:07</sys_updated_on>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>run</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Daily</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>0</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>ceeb1c411b8bf0108f4aedb8b04bcb86</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 07:16:07</sys_updated_on>
+            <value>daily</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>run</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Weekly</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>1</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>c2eb1c411b8bf0108f4aedb8b04bcb89</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 07:16:07</sys_updated_on>
+            <value>weekly</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>run</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Monthly</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>2</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>46eb1c411b8bf0108f4aedb8b04bcb8a</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 07:16:07</sys_updated_on>
+            <value>monthly</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>run</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Periodically</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>3</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>c6eb1c411b8bf0108f4aedb8b04bcb8b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 07:16:07</sys_updated_on>
+            <value>periodically</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>run</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Once</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>4</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>4aeb1c411b8bf0108f4aedb8b04bcb8c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 07:16:07</sys_updated_on>
+            <value>once</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>run</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>On Demand</label>
+            <language>en</language>
+            <name>x_440354_cvrf_inte_cvrf_configuration</name>
+            <sequence>5</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2021-10-05 07:16:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>caeb1c411b8bf0108f4aedb8b04bcb8d</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2021-10-05 10:12:19</sys_updated_on>
+            <value>on_demand</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>

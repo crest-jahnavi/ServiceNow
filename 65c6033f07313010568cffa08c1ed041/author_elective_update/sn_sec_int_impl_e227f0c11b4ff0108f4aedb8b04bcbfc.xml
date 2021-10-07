@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_sec_int_impl">
+    <sn_sec_int_impl action="DELETE">
+        <active>true</active>
+        <integration display_value="CVRF Solution Integration">2bc813fb07713010568cffa08c1ed0e5</integration>
+        <is_default>false</is_default>
+        <name>redhat1</name>
+        <sys_class_name>sn_sec_int_impl</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 09:15:13</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path/>
+        <sys_id>e227f0c11b4ff0108f4aedb8b04bcbfc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>redhat1</sys_name>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_update_name>sn_sec_int_impl_e227f0c11b4ff0108f4aedb8b04bcbfc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 09:15:13</sys_updated_on>
+        <validation_status>unvalidated</validation_status>
+    </sn_sec_int_impl>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</application>
+        <file_path/>
+        <instance_id>42e0ea90db910fc04065f0e5bf9619af</instance_id>
+        <instance_name>ven02207</instance_name>
+        <name>sn_sec_int_impl_e227f0c11b4ff0108f4aedb8b04bcbfc</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_sec_int_impl"><sn_sec_int_impl action="INSERT_OR_UPDATE"><active>true</active><integration display_value="CVRF Solution Integration">2bc813fb07713010568cffa08c1ed0e5</integration><is_default>false</is_default><name>redhat1</name><sys_class_name>sn_sec_int_impl</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2021-10-05 09:15:13</sys_created_on><sys_customer_update>false</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path/><sys_id>e227f0c11b4ff0108f4aedb8b04bcbfc</sys_id><sys_mod_count>0</sys_mod_count><sys_name>redhat1</sys_name><sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope><sys_update_name>sn_sec_int_impl_e227f0c11b4ff0108f4aedb8b04bcbfc</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2021-10-05 09:15:13</sys_updated_on><validation_status>unvalidated</validation_status></sn_sec_int_impl></record_update>]]></payload>
+        <payload_hash>1184835112</payload_hash>
+        <record_name>redhat1</record_name>
+        <reverted_from/>
+        <source>ce510b35db4d2f40223ef5361d96196f</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 09:15:14</sys_created_on>
+        <sys_id>7227f8051b4ff0108f4aedb8b04bcb72</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>17c4fbc51a80000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 09:15:14</sys_updated_on>
+        <type>Integration Instance</type>
+        <update_guid>7a27f805664ff0103b9712b19bd40271</update_guid>
+        <update_guid_history>7a27f805664ff0103b9712b19bd40271:1184835112</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Record deleted 2021-10-05 17:11:16">c69815091b0334108f4aedb8b04bcb00</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 11:41:16</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_db_object display_value="" name="sn_sec_int_impl">sn_sec_int_impl</sys_db_object>
+        <sys_id>07bff698568e460082e491384468c400</sys_id>
+        <sys_metadata>e227f0c11b4ff0108f4aedb8b04bcbfc</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>redhat1</sys_name>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_scope_delete display_value="">3e71da53962b400aacf1b36d1de0b224</sys_scope_delete>
+        <sys_update_name>sn_sec_int_impl_e227f0c11b4ff0108f4aedb8b04bcbfc</sys_update_name>
+        <sys_update_version display_value="sn_sec_int_impl_e227f0c11b4ff0108f4aedb8b04bcbfc">7227f8051b4ff0108f4aedb8b04bcb72</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 11:41:16</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

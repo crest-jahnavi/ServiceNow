@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_sec_int_impl_config">
+    <sn_sec_int_impl_config action="DELETE">
+        <configuration display_value="start_date">8d93ff090702b010568cffa08c1ed0e4</configuration>
+        <implementation display_value="test10">cf9c70811b8ff0108f4aedb8b04bcbce</implementation>
+        <password_value/>
+        <sys_class_name>sn_sec_int_impl_config</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 09:39:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path/>
+        <sys_id>039c3c811b8ff0108f4aedb8b04bcbbe</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_update_name>sn_sec_int_impl_config_039c3c811b8ff0108f4aedb8b04bcbbe</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 09:39:00</sys_updated_on>
+        <value/>
+    </sn_sec_int_impl_config>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</application>
+        <file_path/>
+        <instance_id>42e0ea90db910fc04065f0e5bf9619af</instance_id>
+        <instance_name>ven02207</instance_name>
+        <name>sn_sec_int_impl_config_039c3c811b8ff0108f4aedb8b04bcbbe</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_sec_int_impl_config"><sn_sec_int_impl_config action="INSERT_OR_UPDATE"><configuration display_value="start_date">8d93ff090702b010568cffa08c1ed0e4</configuration><implementation display_value="test10">cf9c70811b8ff0108f4aedb8b04bcbce</implementation><password_value/><sys_class_name>sn_sec_int_impl_config</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2021-10-05 09:39:00</sys_created_on><sys_customer_update>false</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path/><sys_id>039c3c811b8ff0108f4aedb8b04bcbbe</sys_id><sys_mod_count>0</sys_mod_count><sys_name/><sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope><sys_update_name>sn_sec_int_impl_config_039c3c811b8ff0108f4aedb8b04bcbbe</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2021-10-05 09:39:00</sys_updated_on><value/></sn_sec_int_impl_config></record_update>]]></payload>
+        <payload_hash>-1507369449</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>ce510b35db4d2f40223ef5361d96196f</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 09:39:00</sys_created_on>
+        <sys_id>0b9c3c811b8ff0108f4aedb8b04bcbbf</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>17c4fd215a30000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 09:39:00</sys_updated_on>
+        <type>Integration Instance Parameter</type>
+        <update_guid>039c3c818e8ff010b9a2644f5c5f37bf</update_guid>
+        <update_guid_history>039c3c818e8ff010b9a2644f5c5f37bf:-1507369449</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Record deleted 2021-10-05 17:11:14">199891091b0334108f4aedb8b04bcbc3</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-10-05 11:41:14</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_db_object display_value="" name="sn_sec_int_impl_config">sn_sec_int_impl_config</sys_db_object>
+        <sys_id>0ee72963a7c34b8e810836c0e76419d1</sys_id>
+        <sys_metadata>039c3c811b8ff0108f4aedb8b04bcbbe</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
+        <sys_scope_delete display_value="">3e71da53962b400aacf1b36d1de0b224</sys_scope_delete>
+        <sys_update_name>sn_sec_int_impl_config_039c3c811b8ff0108f4aedb8b04bcbbe</sys_update_name>
+        <sys_update_version display_value="sn_sec_int_impl_config_039c3c811b8ff0108f4aedb8b04bcbbe">0b9c3c811b8ff0108f4aedb8b04bcbbf</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-05 11:41:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

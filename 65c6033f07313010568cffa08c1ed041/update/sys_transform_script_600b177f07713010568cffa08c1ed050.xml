@@ -35,9 +35,21 @@
 					
 				
 				
-				
+				var src;
 				var domain = importQueueEntryGR.getElement("integration_process.integration_run.integration").run_as.sys_domain + '';
-				var src = importQueueEntryGR.getElement("integration_process.integration_run.integration").integration.source + '';
+				if(gs.nil(importQueueEntryGR.x_440354_cvrf_inte_vendor_name)){
+					var integrationGr = new GlideRecord("x_440354_cvrf_inte_cvrf_solution_integration");
+					if(integrationGr.get(integration)){
+						src = integrationGr.vendor;
+					}
+					if (gs.nil(src)){
+						src = importQueueEntryGR.getElement("integration_process.integration_run.integration").integration.source + '';
+					}
+				}
+				else {
+					src = importQueueEntryGR.x_440354_cvrf_inte_vendor_name;
+				}
+				
 				var processId = importQueueEntryGR.getValue("integration_process");
 				gs.info('domain : ' + domain + " src : " + src + " process ID : " + processId);
 				// var processor = new CVRFSolutionProcessor(domain, src, processId);
@@ -61,7 +73,7 @@
         <sys_created_on>2021-08-13 06:56:16</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>600b177f07713010568cffa08c1ed050</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>onComplete</sys_name>
         <sys_package display_value="CVRF Integration for Security Operations" source="x_440354_cvrf_inte">65c6033f07313010568cffa08c1ed041</sys_package>
         <sys_policy/>
@@ -69,7 +81,7 @@
         <sys_scope display_value="CVRF Integration for Security Operations">65c6033f07313010568cffa08c1ed041</sys_scope>
         <sys_update_name>sys_transform_script_600b177f07713010568cffa08c1ed050</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-09-29 11:49:59</sys_updated_on>
+        <sys_updated_on>2021-10-05 12:03:44</sys_updated_on>
         <when>onComplete</when>
     </sys_transform_script>
 </record_update>

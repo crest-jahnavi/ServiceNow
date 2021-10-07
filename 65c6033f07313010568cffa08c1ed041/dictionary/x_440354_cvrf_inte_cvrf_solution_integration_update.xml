@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element label="CVRF Solution Integration Update" max_length="40" name="x_440354_cvrf_inte_cvrf_solution_integration_update" sizeclass="638" type="collection">
+    <element label="CVRF Solution Integration Update" max_length="40" name="x_440354_cvrf_inte_cvrf_solution_integration_update" sizeclass="0" type="collection">
         <element label="CVRF Url" max_length="1024" name="cvrf_url" type="url"/>
         <element label="Release ID" max_length="255" name="id" type="string"/>
         <element label="Initial Release Date" max_length="40" name="initial_release_date" type="glide_date_time"/>
